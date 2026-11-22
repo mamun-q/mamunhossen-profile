@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mamun Hossen — Founder of MeetBook</title>
+<meta name="description" content="Mamun Hossen from Jessore, Bangladesh. Founder of MeetBook, a social platform made in Bangladesh.">
+<style>
+  :root{
+    --bg:#070a14;
+    --bg-2:#0b1020;
+    --card:rgba(255,255,255,.045);
+    --card-border:rgba(255,255,255,.09);
+    --text:#eef1f8;
+    --muted:#9aa5bd;
+    --brand:#1877f2;
+    --brand-2:#7b61ff;
+    --radius:20px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:
+      radial-gradient(600px 400px at 85% -5%,rgba(123,97,255,.28),transparent 60%),
+      radial-gradient(700px 500px at -10% 30%,rgba(24,119,242,.22),transparent 60%),
+      linear-gradient(180deg,var(--bg-2),var(--bg));
+    color:var(--text);
+    min-height:100vh;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:56px 20px 40px}
+  header{text-align:center;padding:24px 0 8px}
+  .avatar{
+    width:104px;height:104px;margin:0 auto 20px;
+    border-radius:32px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:38px;font-weight:800;letter-spacing:1px;color:#fff;
+    background:linear-gradient(135deg,var(--brand),var(--brand-2));
+    box-shadow:0 18px 40px rgba(24,119,242,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  h1{font-size:34px;font-weight:800;letter-spacing:-.5px;line-height:1.2}
+  .tagline{
+    margin-top:8px;font-size:16px;font-weight:600;
+    background:linear-gradient(90deg,#6db3ff,#b7a6ff);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+  }
+  .oneline{margin-top:14px;color:var(--muted);font-size:15.5px;max-width:480px;margin-left:auto;margin-right:auto}
+  .bangla{margin-top:10px;font-size:17px;color:var(--text);font-weight:600}
+  .location{
+    display:inline-flex;align-items:center;gap:6px;margin-top:16px;
+    padding:6px 14px;border-radius:999px;
+    background:var(--card);border:1px solid var(--card-border);
+    font-size:13.5px;color:var(--muted);
+  }
+  .location svg{width:14px;height:14px;flex:none}
+  section{margin-top:36px}
+  .section-title{
+    font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:var(--radius);padding:22px;
+    backdrop-filter:blur(6px);
+  }
+  .card p{color:#c6cede;font-size:15.5px}
+  .card p + p{margin-top:10px}
+  .project{
+    display:block;text-decoration:none;color:inherit;
+    transition:transform .18s ease,border-color .18s ease,background .18s ease;
+  }
+  .project:hover,.project:focus-visible{
+    transform:translateY(-2px);border-color:rgba(123,97,255,.5);
+    background:rgba(255,255,255,.065);outline:none;
+  }
+  .project-head{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+  .project-logo{
+    width:48px;height:48px;border-radius:14px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;font-weight:800;color:#fff;
+    background:linear-gradient(135deg,var(--brand),var(--brand-2));
+    box-shadow:0 8px 20px rgba(24,119,242,.35);
+  }
+  .project-name{font-size:19px;font-weight:700}
+  .project-sub{font-size:13px;color:var(--muted)}
+  .project p{font-size:15px}
+  .project-link{
+    display:inline-flex;align-items:center;gap:6px;margin-top:14px;
+    font-size:14px;font-weight:600;color:#6db3ff;
+  }
+  .project-link svg{width:15px;height:15px}
+  .links{display:flex;flex-direction:column;gap:12px}
+  .link-btn{
+    display:flex;align-items:center;gap:14px;
+    padding:15px 18px;border-radius:16px;text-decoration:none;
+    background:var(--card);border:1px solid var(--card-border);color:var(--text);
+    font-weight:600;font-size:15.5px;min-height:56px;
+    transition:transform .18s ease,border-color .18s ease,background .18s ease;
+  }
+  .link-btn:hover,.link-btn:focus-visible{
+    transform:translateY(-2px);border-color:rgba(24,119,242,.55);
+    background:rgba(255,255,255,.065);outline:none;
+  }
+  .link-btn svg{width:21px;height:21px;flex:none;color:#8fb8ff}
+  .link-btn .arrow{margin-left:auto;color:var(--muted);font-weight:400}
+  footer{
+    margin-top:48px;text-align:center;color:var(--muted);font-size:13.5px;
+    padding-top:22px;border-top:1px solid rgba(255,255,255,.07);
+  }
+  @media (min-width:560px){
+    .wrap{padding-top:80px}
+    h1{font-size:42px}
+    .avatar{width:120px;height:120px;font-size:44px;border-radius:36px}
+    .links{flex-direction:row}
+    .link-btn{flex:1}
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="avatar" aria-hidden="true">MH</div>
+      <h1>Mamun Hossen</h1>
+      <p class="tagline">Founder of MeetBook</p>
+      <p class="oneline">Building a social platform from Bangladesh, for everyone — one feature, one friend, one post at a time.</p>
+      <p class="bangla" lang="bn">স্বপ্ন দেখি, বানিয়ে ফেলি।</p>
+      <div>
+        <span class="location">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Jessore, Bangladesh
+        </span>
+      </div>
+    </header>
+
+    <section aria-labelledby="about-title">
+      <h2 class="section-title" id="about-title">About</h2>
+      <div class="card">
+        <p>I'm Mamun Hossen, from Jessore, Bangladesh. I build things for the web — and my biggest project is MeetBook, a social platform made in Bangladesh.</p>
+        <p>MeetBook brings together friends, groups, pages, chat and AI companions in one friendly place. It's designed mobile-first, because that's how most people here actually connect.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="project-title">
+      <h2 class="section-title" id="project-title">Featured Project</h2>
+      <a class="card project" href="https://mamun-q.github.io/MeetBook/">
+        <div class="project-head">
+          <div class="project-logo" aria-hidden="true">M</div>
+          <div>
+            <div class="project-name">MeetBook</div>
+            <div class="project-sub">A social platform made in Bangladesh</div>
+          </div>
+        </div>
+        <p>A social platform with friends, groups, pages, chat and AI companions.</p>
+        <span class="project-link">
+          Visit MeetBook
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </span>
+      </a>
+    </section>
+
+    <section aria-labelledby="links-title">
+      <h2 class="section-title" id="links-title">Find Me</h2>
+      <nav class="links">
+        <a class="link-btn" href="https://mamun-q.github.io/MeetBook/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          My MeetBook Profile
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="link-btn" href="https://github.com/mamun-q">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11.1 11.1 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 1.28 1.06.83.77 1.06 1.56 0 1.13-.01 2.04-.01 2.32 0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          GitHub
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </nav>
+    </section>
+
+    <footer>© 2026 Mamun Hossen</footer>
+  </main>
+</body>
+</html>
