@@ -2,8 +2,7 @@ import type { Project } from './types';
 
 /**
  * Project showcase records. Buttons render only when a URL exists —
- * no dead links, ever. NOTE (owner): "Limoria" has no details yet;
- * the neutral copy below is a placeholder for HIS text, not a claim.
+ * no dead links, ever.
  */
 export const projects: Project[] = [
   {
@@ -39,21 +38,5 @@ export const projects: Project[] = [
     status: { en: 'In Development', bn: 'উন্নয়নাধীন' },
     gradient: 'linear-gradient(135deg,#0ea5e9 0%,#6366f1 55%,#a855f7 100%)',
     monogram: 'AI',
-  },
-  {
-    id: 'limoria',
-    name: 'Limoria',
-    tagline: {
-      en: 'A new project taking shape.',
-      bn: 'একটি নতুন প্রজেক্ট আকার নিচ্ছে।',
-    },
-    description: {
-      en: 'A new project taking shape — details coming soon.',
-      bn: 'একটি নতুন প্রজেক্ট আকার নিচ্ছে — বিস্তারিত শীঘ্রই আসছে।',
-    },
-    tech: [],
-    status: { en: 'Upcoming', bn: 'শীঘ্রই আসছে' },
-    gradient: 'linear-gradient(135deg,#1e1b4b 0%,#7b61ff 55%,#d9a441 110%)',
-    monogram: 'L',
   },
 ];
