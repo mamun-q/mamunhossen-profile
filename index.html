@@ -3,176 +3,346 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mamun Hossen — Founder of MeetBook</title>
-<meta name="description" content="Mamun Hossen from Jessore, Bangladesh. Founder of MeetBook, a social platform made in Bangladesh.">
+<title>Mamun Hossen — Founder &amp; Creator of MeetBook</title>
+<meta name="description" content="Mamun Hossen from Jessore, Bangladesh. Founder & Creator of MeetBook, a social platform made in Bangladesh.">
 <style>
   :root{
-    --bg:#070a14;
-    --bg-2:#0b1020;
-    --card:rgba(255,255,255,.045);
-    --card-border:rgba(255,255,255,.09);
-    --text:#eef1f8;
-    --muted:#9aa5bd;
+    --bg:#05070f;
+    --bg-2:#0a0e1d;
+    --surface:rgba(255,255,255,.045);
+    --surface-strong:rgba(255,255,255,.07);
+    --hairline:rgba(255,255,255,.08);
+    --hairline-strong:rgba(255,255,255,.14);
+    --text:#f2f4fb;
+    --body:#c3cbdf;
+    --muted:#98a2bd;
     --brand:#1877f2;
     --brand-2:#7b61ff;
-    --radius:20px;
+    --brand-soft:#6db3ff;
+    --r-sm:12px;
+    --r-md:16px;
+    --r-lg:22px;
+    --r-xl:28px;
+    --shadow-card:0 1px 2px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.35),0 32px 64px rgba(2,6,20,.45);
+    --shadow-lift:0 2px 4px rgba(0,0,0,.4),0 20px 44px rgba(0,0,0,.45),0 40px 80px rgba(2,6,20,.5);
+    --ease:cubic-bezier(.22,.8,.32,1);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     background:
-      radial-gradient(600px 400px at 85% -5%,rgba(123,97,255,.28),transparent 60%),
-      radial-gradient(700px 500px at -10% 30%,rgba(24,119,242,.22),transparent 60%),
-      linear-gradient(180deg,var(--bg-2),var(--bg));
+      radial-gradient(720px 460px at 88% -8%,rgba(123,97,255,.30),transparent 62%),
+      radial-gradient(820px 560px at -12% 26%,rgba(24,119,242,.24),transparent 62%),
+      radial-gradient(600px 600px at 50% 115%,rgba(24,119,242,.10),transparent 65%),
+      linear-gradient(180deg,var(--bg-2),var(--bg) 55%);
+    background-attachment:fixed;
     color:var(--text);
     min-height:100vh;
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
   }
-  .wrap{max-width:680px;margin:0 auto;padding:56px 20px 40px}
-  header{text-align:center;padding:24px 0 8px}
-  .avatar{
-    width:104px;height:104px;margin:0 auto 20px;
-    border-radius:32px;
+  .wrap{max-width:720px;margin:0 auto;padding:64px 20px 48px}
+
+  /* ---------- Reveal animation (CSS only) ---------- */
+  @keyframes rise{
+    from{opacity:0;transform:translateY(18px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .rise{opacity:0;animation:rise .8s var(--ease) forwards}
+  .d1{animation-delay:.05s}.d2{animation-delay:.14s}.d3{animation-delay:.23s}
+  .d4{animation-delay:.34s}.d5{animation-delay:.46s}.d6{animation-delay:.58s}
+
+  /* ---------- Hero ---------- */
+  header{text-align:center;padding:16px 0 4px}
+  .avatar-ring{
+    width:124px;height:124px;margin:0 auto 26px;border-radius:50%;
+    padding:3px;
+    background:conic-gradient(from 210deg,var(--brand),var(--brand-2),#4fc3ff,var(--brand));
+    box-shadow:0 0 0 6px rgba(24,119,242,.08),0 0 44px rgba(24,119,242,.45),0 0 90px rgba(123,97,255,.30),0 24px 48px rgba(0,0,0,.5);
+  }
+  .avatar-core{
+    width:100%;height:100%;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    font-size:38px;font-weight:800;letter-spacing:1px;color:#fff;
-    background:linear-gradient(135deg,var(--brand),var(--brand-2));
-    box-shadow:0 18px 40px rgba(24,119,242,.35),inset 0 1px 0 rgba(255,255,255,.35);
+    font-size:42px;font-weight:800;letter-spacing:1.5px;color:#fff;
+    background:
+      radial-gradient(120% 120% at 30% 20%,rgba(255,255,255,.28),transparent 55%),
+      linear-gradient(140deg,var(--brand),var(--brand-2));
+    border:3px solid var(--bg);
+    text-shadow:0 2px 10px rgba(0,0,0,.35);
   }
-  h1{font-size:34px;font-weight:800;letter-spacing:-.5px;line-height:1.2}
-  .tagline{
-    margin-top:8px;font-size:16px;font-weight:600;
-    background:linear-gradient(90deg,#6db3ff,#b7a6ff);
+  h1{
+    font-size:38px;font-weight:800;letter-spacing:-1px;line-height:1.12;
+  }
+  .role{
+    margin-top:10px;font-size:17px;font-weight:700;letter-spacing:.1px;
+    background:linear-gradient(90deg,#7db8ff,#c0aeff);
     -webkit-background-clip:text;background-clip:text;
     -webkit-text-fill-color:transparent;color:transparent;
   }
-  .oneline{margin-top:14px;color:var(--muted);font-size:15.5px;max-width:480px;margin-left:auto;margin-right:auto}
-  .bangla{margin-top:10px;font-size:17px;color:var(--text);font-weight:600}
+  .oneline{margin:16px auto 0;color:var(--muted);font-size:15.5px;max-width:470px}
+  .bangla{margin-top:12px;font-size:17.5px;color:var(--text);font-weight:600;letter-spacing:.2px}
   .location{
-    display:inline-flex;align-items:center;gap:6px;margin-top:16px;
-    padding:6px 14px;border-radius:999px;
-    background:var(--card);border:1px solid var(--card-border);
-    font-size:13.5px;color:var(--muted);
+    display:inline-flex;align-items:center;gap:7px;margin-top:20px;
+    padding:7px 15px;border-radius:999px;
+    background:var(--surface);border:1px solid var(--hairline);
+    font-size:13.5px;font-weight:500;color:var(--body);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   }
-  .location svg{width:14px;height:14px;flex:none}
-  section{margin-top:36px}
+  .location svg{width:14px;height:14px;flex:none;color:var(--brand-soft)}
+  .hero-actions{
+    display:flex;flex-direction:column;gap:12px;
+    margin:30px auto 0;max-width:440px;
+  }
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    min-height:52px;padding:13px 24px;border-radius:999px;
+    font-size:15.5px;font-weight:700;text-decoration:none;letter-spacing:.1px;
+    transition:transform .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease),border-color .18s var(--ease);
+  }
+  .btn svg{width:17px;height:17px;flex:none}
+  .btn-primary{
+    color:#fff;border:1px solid rgba(255,255,255,.18);
+    background:linear-gradient(120deg,var(--brand),var(--brand-2));
+    box-shadow:0 10px 28px rgba(24,119,242,.42),0 4px 10px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(24,119,242,.5),0 6px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.35)}
+  .btn-primary:active{transform:translateY(0) scale(.985)}
+  .btn-ghost{
+    color:var(--text);
+    background:var(--surface);border:1px solid var(--hairline-strong);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    box-shadow:0 8px 22px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .btn-ghost:hover{transform:translateY(-2px);background:var(--surface-strong);border-color:rgba(255,255,255,.24)}
+  .btn-ghost:active{transform:translateY(0) scale(.985)}
+  .btn:focus-visible,.link-row:focus-visible,.showcase:focus-visible{
+    outline:2px solid var(--brand-soft);outline-offset:3px;
+  }
+
+  /* ---------- Sections & cards ---------- */
+  section{margin-top:52px}
+  .section-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
   .section-title{
-    font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
-    color:var(--muted);margin-bottom:14px;
+    font-size:12.5px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+    color:var(--muted);white-space:nowrap;
   }
+  .section-line{flex:1;height:1px;background:linear-gradient(90deg,var(--hairline-strong),transparent)}
   .card{
-    background:var(--card);border:1px solid var(--card-border);
-    border-radius:var(--radius);padding:22px;
-    backdrop-filter:blur(6px);
+    background:linear-gradient(165deg,rgba(255,255,255,.065),rgba(255,255,255,.03));
+    border:1px solid var(--hairline);
+    border-radius:var(--r-lg);padding:26px 24px;
+    box-shadow:var(--shadow-card);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   }
-  .card p{color:#c6cede;font-size:15.5px}
-  .card p + p{margin-top:10px}
-  .project{
-    display:block;text-decoration:none;color:inherit;
-    transition:transform .18s ease,border-color .18s ease,background .18s ease;
+  .card p{color:var(--body);font-size:15.5px}
+  .card p + p{margin-top:12px}
+  .card p strong{color:var(--text);font-weight:650}
+
+  /* ---------- Showcase ---------- */
+  .showcase{
+    display:block;text-decoration:none;color:inherit;overflow:hidden;
+    border-radius:var(--r-xl);padding:0;
+    transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s var(--ease);
   }
-  .project:hover,.project:focus-visible{
-    transform:translateY(-2px);border-color:rgba(123,97,255,.5);
-    background:rgba(255,255,255,.065);outline:none;
+  .showcase:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift);border-color:rgba(123,97,255,.45)}
+  .showcase:active{transform:translateY(-1px) scale(.995)}
+  .showcase-banner{
+    position:relative;
+    padding:30px 26px 26px;
+    background:
+      radial-gradient(420px 200px at 88% -30%,rgba(255,255,255,.35),transparent 55%),
+      radial-gradient(360px 240px at -10% 120%,rgba(79,195,255,.35),transparent 60%),
+      linear-gradient(120deg,var(--brand) 0%,#4f6df5 48%,var(--brand-2) 100%);
+    border-bottom:1px solid rgba(255,255,255,.16);
   }
-  .project-head{display:flex;align-items:center;gap:14px;margin-bottom:10px}
-  .project-logo{
-    width:48px;height:48px;border-radius:14px;flex:none;
+  .showcase-brand{display:flex;align-items:center;gap:16px}
+  .showcase-logo{
+    width:56px;height:56px;border-radius:17px;flex:none;
     display:flex;align-items:center;justify-content:center;
-    font-size:22px;font-weight:800;color:#fff;
-    background:linear-gradient(135deg,var(--brand),var(--brand-2));
-    box-shadow:0 8px 20px rgba(24,119,242,.35);
+    font-size:26px;font-weight:800;color:#fff;
+    background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.35);
+    box-shadow:0 10px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.45);
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
   }
-  .project-name{font-size:19px;font-weight:700}
-  .project-sub{font-size:13px;color:var(--muted)}
-  .project p{font-size:15px}
-  .project-link{
-    display:inline-flex;align-items:center;gap:6px;margin-top:14px;
-    font-size:14px;font-weight:600;color:#6db3ff;
+  .showcase-name{font-size:24px;font-weight:800;letter-spacing:-.4px;color:#fff;line-height:1.15}
+  .showcase-sub{font-size:13.5px;color:rgba(255,255,255,.85);font-weight:500}
+  .showcase-body{padding:24px 26px 26px}
+  .showcase-body p{font-size:15.5px}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:7px 13px;border-radius:999px;font-size:13px;font-weight:600;
+    color:var(--body);background:rgba(255,255,255,.05);
+    border:1px solid var(--hairline);
   }
-  .project-link svg{width:15px;height:15px}
+  .chip::before{
+    content:"";width:6px;height:6px;border-radius:50%;flex:none;
+    background:linear-gradient(120deg,var(--brand),var(--brand-2));
+    box-shadow:0 0 8px rgba(24,119,242,.8);
+  }
+  .showcase-link{
+    display:inline-flex;align-items:center;gap:7px;margin-top:22px;
+    font-size:14.5px;font-weight:700;color:var(--brand-soft);
+  }
+  .showcase-link svg{width:16px;height:16px;transition:transform .18s var(--ease)}
+  .showcase:hover .showcase-link svg{transform:translate(2px,-2px)}
+
+  /* ---------- Connect ---------- */
   .links{display:flex;flex-direction:column;gap:12px}
-  .link-btn{
-    display:flex;align-items:center;gap:14px;
-    padding:15px 18px;border-radius:16px;text-decoration:none;
-    background:var(--card);border:1px solid var(--card-border);color:var(--text);
-    font-weight:600;font-size:15.5px;min-height:56px;
-    transition:transform .18s ease,border-color .18s ease,background .18s ease;
+  .link-row{
+    display:flex;align-items:center;gap:15px;
+    padding:17px 20px;border-radius:var(--r-md);text-decoration:none;
+    background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+    border:1px solid var(--hairline);color:var(--text);
+    box-shadow:0 6px 18px rgba(0,0,0,.28);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    transition:transform .18s var(--ease),border-color .18s var(--ease),background .18s var(--ease),box-shadow .18s var(--ease);
   }
-  .link-btn:hover,.link-btn:focus-visible{
-    transform:translateY(-2px);border-color:rgba(24,119,242,.55);
-    background:rgba(255,255,255,.065);outline:none;
+  .link-row:hover{transform:translateY(-2px);border-color:rgba(24,119,242,.5);box-shadow:0 12px 26px rgba(0,0,0,.38)}
+  .link-row:active{transform:translateY(0) scale(.99)}
+  .link-icon{
+    width:42px;height:42px;border-radius:var(--r-sm);flex:none;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(24,119,242,.13);border:1px solid rgba(24,119,242,.28);
+    color:#8fb8ff;
   }
-  .link-btn svg{width:21px;height:21px;flex:none;color:#8fb8ff}
-  .link-btn .arrow{margin-left:auto;color:var(--muted);font-weight:400}
+  .link-icon svg{width:20px;height:20px}
+  .link-text{display:flex;flex-direction:column;line-height:1.35;min-width:0}
+  .link-label{font-weight:650;font-size:15.5px}
+  .link-hint{font-size:13px;color:var(--muted)}
+  .link-arrow{margin-left:auto;flex:none;color:var(--muted);display:flex;transition:transform .18s var(--ease),color .18s var(--ease)}
+  .link-arrow svg{width:18px;height:18px}
+  .link-row:hover .link-arrow{transform:translateX(3px);color:var(--brand-soft)}
+
   footer{
-    margin-top:48px;text-align:center;color:var(--muted);font-size:13.5px;
-    padding-top:22px;border-top:1px solid rgba(255,255,255,.07);
+    margin-top:60px;text-align:center;color:var(--muted);font-size:13.5px;
+    padding-top:24px;border-top:1px solid var(--hairline);
   }
+
+  /* ---------- Wider screens ---------- */
   @media (min-width:560px){
-    .wrap{padding-top:80px}
-    h1{font-size:42px}
-    .avatar{width:120px;height:120px;font-size:44px;border-radius:36px}
-    .links{flex-direction:row}
-    .link-btn{flex:1}
+    .wrap{padding:88px 28px 56px}
+    h1{font-size:48px}
+    .avatar-ring{width:140px;height:140px}
+    .avatar-core{font-size:48px}
+    .role{font-size:18.5px}
+    .hero-actions{flex-direction:row;justify-content:center;max-width:none}
+    .btn{min-width:196px}
+    .card{padding:30px 30px}
+    .showcase-banner{padding:36px 32px 30px}
+    .showcase-body{padding:28px 32px 30px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .rise{opacity:1;animation:none}
+    *,*::before,*::after{transition:none !important;animation:none !important}
   }
 </style>
 </head>
 <body>
   <main class="wrap">
     <header>
-      <div class="avatar" aria-hidden="true">MH</div>
-      <h1>Mamun Hossen</h1>
-      <p class="tagline">Founder of MeetBook</p>
-      <p class="oneline">Building a social platform from Bangladesh, for everyone — one feature, one friend, one post at a time.</p>
-      <p class="bangla" lang="bn">স্বপ্ন দেখি, বানিয়ে ফেলি।</p>
-      <div>
+      <div class="avatar-ring rise d1">
+        <div class="avatar-core" aria-hidden="true">MH</div>
+      </div>
+      <h1 class="rise d2">Mamun Hossen</h1>
+      <p class="role rise d2">Founder &amp; Creator of MeetBook</p>
+      <p class="oneline rise d3">Building a social platform from Bangladesh, for everyone — one feature, one friend, one post at a time.</p>
+      <p class="bangla rise d3" lang="bn">স্বপ্ন দেখি, বানিয়ে ফেলি।</p>
+      <div class="rise d4">
         <span class="location">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           Jessore, Bangladesh
         </span>
       </div>
+      <div class="hero-actions rise d4">
+        <a class="btn btn-primary" href="https://mamun-q.github.io/MeetBook/">
+          Visit MeetBook
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/mamun-q">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11.1 11.1 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 1.28 1.06.83.77 1.06 1.56 0 1.13-.01 2.04-.01 2.32 0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          GitHub
+        </a>
+      </div>
     </header>
 
-    <section aria-labelledby="about-title">
-      <h2 class="section-title" id="about-title">About</h2>
+    <section class="rise d5" aria-labelledby="about-title">
+      <div class="section-head">
+        <h2 class="section-title" id="about-title">About</h2>
+        <span class="section-line" aria-hidden="true"></span>
+      </div>
       <div class="card">
-        <p>I'm Mamun Hossen, from Jessore, Bangladesh. I build things for the web — and my biggest project is MeetBook, a social platform made in Bangladesh.</p>
+        <p>I'm <strong>Mamun Hossen</strong>, from Jessore, Bangladesh. I build things for the web — and my biggest project is <strong>MeetBook</strong>, a social platform made in Bangladesh.</p>
         <p>MeetBook brings together friends, groups, pages, chat and AI companions in one friendly place. It's designed mobile-first, because that's how most people here actually connect.</p>
       </div>
     </section>
 
-    <section aria-labelledby="project-title">
-      <h2 class="section-title" id="project-title">Featured Project</h2>
-      <a class="card project" href="https://mamun-q.github.io/MeetBook/">
-        <div class="project-head">
-          <div class="project-logo" aria-hidden="true">M</div>
-          <div>
-            <div class="project-name">MeetBook</div>
-            <div class="project-sub">A social platform made in Bangladesh</div>
+    <section class="rise d5" aria-labelledby="build-title">
+      <div class="section-head">
+        <h2 class="section-title" id="build-title">What I Build</h2>
+        <span class="section-line" aria-hidden="true"></span>
+      </div>
+      <a class="card showcase" href="https://mamun-q.github.io/MeetBook/">
+        <div class="showcase-banner">
+          <div class="showcase-brand">
+            <div class="showcase-logo" aria-hidden="true">M</div>
+            <div>
+              <div class="showcase-name">MeetBook</div>
+              <div class="showcase-sub">A social platform made in Bangladesh</div>
+            </div>
           </div>
         </div>
-        <p>A social platform with friends, groups, pages, chat and AI companions.</p>
-        <span class="project-link">
-          Visit MeetBook
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-        </span>
+        <div class="showcase-body">
+          <p>A complete social platform I designed and built — where people connect with friends, join groups and pages, chat in real time, share stories, and meet AI companions.</p>
+          <div class="chips" aria-label="MeetBook features">
+            <span class="chip">Social feed</span>
+            <span class="chip">Groups &amp; Pages</span>
+            <span class="chip">Real-time chat</span>
+            <span class="chip">Stories</span>
+            <span class="chip">AI companions</span>
+          </div>
+          <span class="showcase-link">
+            Explore MeetBook
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </span>
+        </div>
       </a>
     </section>
 
-    <section aria-labelledby="links-title">
-      <h2 class="section-title" id="links-title">Find Me</h2>
+    <section class="rise d6" aria-labelledby="connect-title">
+      <div class="section-head">
+        <h2 class="section-title" id="connect-title">Connect</h2>
+        <span class="section-line" aria-hidden="true"></span>
+      </div>
       <nav class="links">
-        <a class="link-btn" href="https://mamun-q.github.io/MeetBook/">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          My MeetBook Profile
-          <span class="arrow" aria-hidden="true">→</span>
+        <a class="link-row" href="https://mamun-q.github.io/MeetBook/">
+          <span class="link-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <span class="link-text">
+            <span class="link-label">My MeetBook Profile</span>
+            <span class="link-hint">Find me where I build and post</span>
+          </span>
+          <span class="link-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
         </a>
-        <a class="link-btn" href="https://github.com/mamun-q">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11.1 11.1 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 1.28 1.06.83.77 1.06 1.56 0 1.13-.01 2.04-.01 2.32 0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
-          GitHub
-          <span class="arrow" aria-hidden="true">→</span>
+        <a class="link-row" href="https://github.com/mamun-q">
+          <span class="link-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11.1 11.1 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 1.28 1.06.83.77 1.06 1.56 0 1.13-.01 2.04-.01 2.32 0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          </span>
+          <span class="link-text">
+            <span class="link-label">GitHub</span>
+            <span class="link-hint">github.com/mamun-q</span>
+          </span>
+          <span class="link-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
         </a>
       </nav>
     </section>
