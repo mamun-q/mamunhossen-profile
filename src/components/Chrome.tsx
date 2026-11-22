@@ -56,13 +56,23 @@ export function Loader({ done }: { done: () => void }) {
       return true;
     }
   });
+  const [leaving, setLeaving] = useState(false);
 
+  // Hardened 2026-11-23 after Limon's phone report (buttons dead
+  // until reload): the intro is a full-screen overlay, and its old
+  // removal depended on framer-motion's exit animation completing.
+  // If that stalls on a phone, the invisible overlay eats every tap
+  // and only a reload (which skips the intro via sessionStorage)
+  // frees the page. Now dismissal is plain timers + CSS: touches are
+  // released the moment fading starts, unmount is timer-guaranteed,
+  // and tapping the intro skips it instantly.
   useEffect(() => {
     if (!show) {
       done();
       return;
     }
-    const timer = setTimeout(() => {
+    const fade = setTimeout(() => setLeaving(true), 1400);
+    const unmount = setTimeout(() => {
       try {
         sessionStorage.setItem('limon-intro', '1');
       } catch {
@@ -70,19 +80,36 @@ export function Loader({ done }: { done: () => void }) {
       }
       setShow(false);
       done();
-    }, 1500);
-    return () => clearTimeout(timer);
+    }, 1750);
+    return () => {
+      clearTimeout(fade);
+      clearTimeout(unmount);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (!show) return null;
+
+  const skip = () => {
+    try {
+      sessionStorage.setItem('limon-intro', '1');
+    } catch {
+      /* ignore */
+    }
+    setLeaving(true);
+    setTimeout(() => {
+      setShow(false);
+      done();
+    }, 120);
+  };
+
   return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-ink"
-          exit={{ opacity: 0, filter: 'blur(6px)' }}
-          transition={{ duration: 0.5 }}
+        <div
+          className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-ink transition-opacity duration-300 ${
+            leaving ? 'pointer-events-none opacity-0' : 'opacity-100'
+          }`}
           aria-hidden="true"
+          onClick={skip}
         >
           <div className="flex overflow-hidden">
             {brand.split('').map((ch, i) => (
@@ -113,9 +140,7 @@ export function Loader({ done }: { done: () => void }) {
               transition={{ duration: 1.15, ease: 'easeInOut' }}
             />
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
   );
 }
 
