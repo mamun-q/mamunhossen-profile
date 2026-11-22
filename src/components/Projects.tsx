@@ -1,10 +1,11 @@
-import { projects } from '../data';
+import { useContent } from '../content';
 import { usePrefs } from '../prefs';
 import { Icon } from './icons';
 import { Reveal, SectionHeading } from './Chrome';
 
 export default function ProjectsSection() {
   const { t, lang } = usePrefs();
+  const { projects } = useContent();
 
   return (
     <section id="projects" className="relative scroll-mt-24 px-4 py-24 sm:px-6">

@@ -1,4 +1,4 @@
-import { digitalWorld, profile, profileCards, skills, socialLinks } from '../data';
+import { useContent } from '../content';
 import { usePrefs } from '../prefs';
 import { Icon } from './icons';
 import { Reveal, SectionHeading } from './Chrome';
@@ -7,6 +7,7 @@ import { Reveal, SectionHeading } from './Chrome';
 
 export function ProfileSection() {
   const { t, lang } = usePrefs();
+  const { profileCards } = useContent();
   return (
     <section id="about" className="relative scroll-mt-24 px-4 py-24 sm:px-6">
       <div className="mx-auto max-w-6xl">
@@ -37,6 +38,7 @@ export function ProfileSection() {
 
 export function SkillsSection() {
   const { t, lang } = usePrefs();
+  const { skills } = useContent();
   return (
     <section id="skills" className="relative scroll-mt-24 px-4 py-24 sm:px-6">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(800px_400px_at_50%_0%,rgba(24,119,242,0.08),transparent_65%)]" />
@@ -101,6 +103,7 @@ function WorldList({
 
 export function WorldSection() {
   const { t } = usePrefs();
+  const { digitalWorld, socialLinks } = useContent();
   return (
     <section id="world" className="relative scroll-mt-24 px-4 py-24 sm:px-6">
       <div className="mx-auto max-w-6xl">
@@ -153,5 +156,6 @@ export function WorldSection() {
 
 function LocationText() {
   const { lang } = usePrefs();
+  const { profile } = useContent();
   return <>{profile.location[lang]}</>;
 }

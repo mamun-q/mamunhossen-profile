@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { profile } from '../data';
+import { useContent } from '../content';
 import { usePrefs } from '../prefs';
 import { Icon } from './icons';
 import Starfield from './Starfield';
@@ -8,6 +8,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   const { t, lang } = usePrefs();
+  const { profile } = useContent();
 
   return (
     <section id="home" className="relative flex min-h-svh items-center overflow-hidden">

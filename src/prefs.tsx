@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { ui } from './data';
+import { settings, ui } from './data';
 import type { Lang, UiKey } from './data';
 
 type Theme = 'dark' | 'light';
@@ -18,10 +18,12 @@ const PrefsContext = createContext<Prefs | null>(null);
 
 function readLang(): Lang {
   try {
-    return localStorage.getItem('limon-lang') === 'bn' ? 'bn' : 'en';
+    const stored = localStorage.getItem('limon-lang');
+    if (stored === 'bn' || stored === 'en') return stored;
   } catch {
-    return 'en';
+    /* storage unavailable */
   }
+  return settings.defaultLang;
 }
 
 function readTheme(): Theme {

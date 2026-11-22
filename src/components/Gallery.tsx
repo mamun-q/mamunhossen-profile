@@ -1,19 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { gallery } from '../data';
+import { useContent } from '../content';
 import { usePrefs } from '../prefs';
 import { Icon } from './icons';
 import { Reveal, SectionHeading } from './Chrome';
 
 export default function GallerySection() {
   const { t, lang } = usePrefs();
-  const categories = useMemo(() => ['All', ...Array.from(new Set(gallery.map((g) => g.category)))], []);
+  const { gallery } = useContent();
+  const categories = useMemo(
+    () => ['All', ...Array.from(new Set(gallery.map((g) => g.category)))],
+    [gallery],
+  );
   const [filter, setFilter] = useState('All');
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   const items = useMemo(
     () => (filter === 'All' ? gallery : gallery.filter((g) => g.category === filter)),
-    [filter],
+    [filter, gallery],
   );
 
   const close = useCallback(() => setOpenIdx(null), []);

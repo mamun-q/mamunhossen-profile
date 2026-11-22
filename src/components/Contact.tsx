@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { profile, socialLinks } from '../data';
+import { useContent } from '../content';
 import { usePrefs } from '../prefs';
 import { Icon } from './icons';
 import { Reveal, SectionHeading } from './Chrome';
@@ -12,21 +12,25 @@ interface Errors {
   message?: string;
 }
 
+type FormStatus = 'idle' | 'sending' | 'sent' | 'error';
+
 /**
- * Phase 1 contact form: fully validated on the client, protected by a
- * honeypot, and genuinely delivered by composing a prefilled mailto:
- * into the visitor's own email app (explained on the page, both
- * languages). Phase 2 replaces the transport with the Supabase inbox.
+ * Contact form (Phase 2): fully validated on the client, protected by
+ * a honeypot, and delivered by INSERTing into the Supabase
+ * site_messages inbox (anon key; RLS length-checks the row server
+ * side). If the insert fails for any reason, the visitor gets an
+ * honest error plus the Phase 1 fallback: a button that composes the
+ * same message into their own email app via mailto:.
  */
 export default function ContactSection() {
   const { t, lang } = usePrefs();
+  const { profile, socialLinks } = useContent();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [honeypot, setHoneypot] = useState('');
   const [errors, setErrors] = useState<Errors>({});
-  const [sent, setSent] = useState(false);
-  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState<FormStatus>('idle');
 
   const validate = (): boolean => {
     const next: Errors = {};
@@ -37,26 +41,39 @@ export default function ContactSection() {
     return Object.keys(next).length === 0;
   };
 
-  const onSubmit = (e: FormEvent) => {
+  const buildMailto = (): string => {
+    const subject = encodeURIComponent(`Message from ${name.trim()} — LIMON website`);
+    const body = encodeURIComponent(`${message.trim()}\n\n— ${name.trim()} (${email.trim()})`);
+    return `mailto:${profile.email}?subject=${subject}&body=${body}`;
+  };
+
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     // Honeypot: a human never fills this hidden field. If it has a
     // value, silently pretend success and drop the submission.
     if (honeypot) {
-      setSent(true);
+      setStatus('sent');
       return;
     }
     if (!validate()) return;
-    setSending(true);
-    const subject = encodeURIComponent(`Message from ${name.trim()} — LIMON website`);
-    const body = encodeURIComponent(
-      `${message.trim()}\n\n— ${name.trim()} (${email.trim()})`,
-    );
-    // Open the visitor's email app with everything prefilled.
-    window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
-    setTimeout(() => {
-      setSending(false);
-      setSent(true);
-    }, 700);
+    setStatus('sending');
+    try {
+      const { getSupabase } = await import('../lib/supabase');
+      const supabase = getSupabase();
+      const id = `msg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+      const { error } = await supabase.from('site_messages').insert({
+        id,
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+        read: false,
+        createdAt: Date.now(),
+      });
+      if (error) throw error;
+      setStatus('sent');
+    } catch {
+      setStatus('error');
+    }
   };
 
   const inputCls = (invalid?: string) =>
@@ -149,7 +166,7 @@ export default function ContactSection() {
           <Reveal delay={0.1} className="lg:col-span-3">
             <div className="glass relative h-full rounded-[28px] p-7">
               <AnimatePresence mode="wait">
-                {sent ? (
+                {status === 'sent' ? (
                   <motion.div
                     key="done"
                     initial={{ opacity: 0, scale: 0.96 }}
@@ -169,7 +186,7 @@ export default function ContactSection() {
                     <button
                       type="button"
                       onClick={() => {
-                        setSent(false);
+                        setStatus('idle');
                         setName('');
                         setEmail('');
                         setMessage('');
@@ -198,6 +215,7 @@ export default function ContactSection() {
                           id="cf-name"
                           type="text"
                           value={name}
+                          maxLength={80}
                           onChange={(e) => setName(e.target.value)}
                           className={inputCls(errors.name)}
                           autoComplete="name"
@@ -218,6 +236,7 @@ export default function ContactSection() {
                           id="cf-email"
                           type="email"
                           value={email}
+                          maxLength={120}
                           onChange={(e) => setEmail(e.target.value)}
                           className={inputCls(errors.email)}
                           autoComplete="email"
@@ -239,6 +258,7 @@ export default function ContactSection() {
                       <textarea
                         id="cf-message"
                         value={message}
+                        maxLength={2000}
                         onChange={(e) => setMessage(e.target.value)}
                         rows={5}
                         className={`${inputCls(errors.message)} resize-none`}
@@ -269,6 +289,36 @@ export default function ContactSection() {
                       </label>
                     </div>
 
+                    {status === 'error' && (
+                      <div
+                        className="mt-4 rounded-2xl border border-red-300/70 bg-red-50 p-4 dark:border-red-400/30 dark:bg-red-500/10"
+                        role="alert"
+                      >
+                        <p className="text-sm font-semibold text-red-700 dark:text-red-300">
+                          {t('formErrorTitle')}
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed text-red-600 dark:text-red-200/85">
+                          {t('formErrorBody')}
+                        </p>
+                        <div className="mt-3 flex flex-wrap gap-2.5">
+                          <button
+                            type="button"
+                            onClick={() => setStatus('idle')}
+                            className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500"
+                          >
+                            {t('formTryAgain')}
+                          </button>
+                          <a
+                            href={buildMailto()}
+                            className="glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-slate-800 dark:text-white"
+                          >
+                            <Icon name="mail" className="h-4 w-4" />
+                            {t('formMailFallback')}
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
                     <p className="mt-4 flex items-start gap-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                       <Icon name="mail" className="mt-0.5 h-4 w-4 shrink-0" />
                       {t('formMailNote')}
@@ -276,11 +326,11 @@ export default function ContactSection() {
 
                     <button
                       type="submit"
-                      disabled={sending}
+                      disabled={status === 'sending'}
                       className="btn-glow font-display mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand to-brand2 px-6 py-3.5 text-sm font-semibold text-white disabled:opacity-60 sm:w-auto"
                     >
                       <Icon name="send" className="h-4 w-4" />
-                      {sending ? t('formSending') : t('formSend')}
+                      {status === 'sending' ? t('formSending') : t('formSend')}
                     </button>
                   </motion.form>
                 )}

@@ -1,14 +1,16 @@
-import { profile, projects, skills, socialLinks } from '../data';
+import { useContent } from '../content';
 import { usePrefs } from '../prefs';
 import { Icon } from './icons';
 
 /**
- * Printable CV generated entirely from the src/data modules — the same
- * single source of truth as the website. "Print / Save as PDF" uses the
- * browser's real print pipeline; there is no fake PDF file.
+ * Printable CV generated entirely from the shared content layer (the
+ * same single source of truth as the website — local data modules,
+ * overlaid with the admin-editable site_content rows). "Print / Save
+ * as PDF" uses the browser's real print pipeline; no fake PDF file.
  */
 export default function CvView() {
   const { t, lang } = usePrefs();
+  const { profile, projects, skills, socialLinks } = useContent();
 
   return (
     <div className="min-h-svh bg-slate-100 px-4 py-8 dark:bg-ink">

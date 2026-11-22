@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { profile, socialLinks } from '../data';
+import { useContent } from '../content';
 import { usePrefs } from '../prefs';
 import { Icon } from './icons';
 
@@ -47,6 +47,7 @@ export function SectionHeading({ kicker, title }: { kicker: string; title: strin
 
 export function Loader({ done }: { done: () => void }) {
   const { t } = usePrefs();
+  const { profile } = useContent();
   const [show, setShow] = useState(() => {
     try {
       return !sessionStorage.getItem('limon-intro');
@@ -178,6 +179,7 @@ const NAV_ITEMS = [
 
 export function Nav() {
   const { t, lang, toggleLang, theme, toggleTheme } = usePrefs();
+  const { profile } = useContent();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('home');
@@ -333,10 +335,11 @@ export function BackToTop() {
 
 export function Footer() {
   const { t, lang } = usePrefs();
+  const { profile, socialLinks, settings } = useContent();
   const [copied, setCopied] = useState(false);
 
   const share = async () => {
-    const url = profile.siteUrl;
+    const url = settings.siteUrl;
     try {
       if (navigator.share) {
         await navigator.share({ title: 'LIMON — Mamun Hossen Limon', url });
