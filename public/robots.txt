@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mamun-q.github.io/mamunhossen-profile/sitemap.xml

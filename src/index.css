@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Space Grotesk", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+  --color-brand: #1877f2;
+  --color-brand2: #7b61ff;
+  --color-gold: #d9a441;
+  --color-goldsoft: #e9c979;
+  --color-ink: #05060f;
+  --animate-spin-slow: spin 14s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+::selection {
+  background: rgba(123, 97, 255, 0.45);
+  color: #fff;
+}
+
+/* ---------- shared helpers ---------- */
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.text-gradient {
+  background: linear-gradient(92deg, #4da3ff 0%, #1877f2 35%, #7b61ff 75%, #c86bff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.dark .glass {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.card-hover {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.45s ease;
+}
+.card-hover:hover {
+  transform: translateY(-5px);
+  border-color: rgba(123, 97, 255, 0.45);
+  box-shadow: 0 24px 50px -22px rgba(24, 119, 242, 0.45);
+}
+
+.btn-glow {
+  box-shadow: 0 10px 34px -10px rgba(24, 119, 242, 0.75), 0 4px 18px -6px rgba(123, 97, 255, 0.65);
+  transition: transform 0.25s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+.btn-glow:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 44px -10px rgba(24, 119, 242, 0.85), 0 8px 26px -6px rgba(123, 97, 255, 0.75);
+}
+.btn-glow:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.avatar-ring {
+  background: conic-gradient(from 140deg, #1877f2, #7b61ff, #d9a441, #38e1ff, #1877f2);
+  animation: spin 14s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2.2s ease-in-out infinite;
+}
+
+/* ---------- custom cursor (desktop pointers only) ---------- */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+}
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  background: #7b61ff;
+}
+.cursor-ring {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(123, 97, 255, 0.65);
+  transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.cursor-ring.is-active {
+  width: 58px;
+  height: 58px;
+  background: rgba(123, 97, 255, 0.12);
+  border-color: rgba(24, 119, 242, 0.8);
+}
+@media (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}
+
+/* ---------- focus visibility ---------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #7b61ff;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- print: only the CV sheet ---------- */
+@media print {
+  body {
+    background: #fff !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .cv-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+}

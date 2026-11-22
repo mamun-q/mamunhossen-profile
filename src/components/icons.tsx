@@ -1,0 +1,86 @@
+/**
+ * Icon facade over lucide-react. Components and data files refer to
+ * icons by string key (so content stays serialisable for the Phase 2
+ * admin); this module maps each key to a Lucide component.
+ */
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  Bot,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Code,
+  Cpu,
+  Download,
+  ExternalLink,
+  Eye,
+  FolderGit2,
+  Globe,
+  Heart,
+  Layers,
+  Lightbulb,
+  Mail,
+  MapPin,
+  Menu,
+  MessagesSquare,
+  Moon,
+  Palette,
+  Printer,
+  Puzzle,
+  Rocket,
+  Route,
+  Send,
+  Share2,
+  Sparkles,
+  Sun,
+  Target,
+  Trophy,
+  User,
+  X,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+
+const map: Record<string, LucideIcon> = {
+  user: User,
+  journey: Route,
+  heart: Heart,
+  target: Target,
+  eye: Eye,
+  spark: Sparkles,
+  cpu: Cpu,
+  palette: Palette,
+  code: Code,
+  bot: Bot,
+  puzzle: Puzzle,
+  bulb: Lightbulb,
+  meetbook: MessagesSquare,
+  github: FolderGit2,
+  globe: Globe,
+  mail: Mail,
+  sun: Sun,
+  moon: Moon,
+  menu: Menu,
+  x: X,
+  arrowUp: ArrowUp,
+  arrowRight: ArrowRight,
+  arrowDown: ArrowDown,
+  external: ExternalLink,
+  download: Download,
+  share: Share2,
+  check: Check,
+  pin: MapPin,
+  chevL: ChevronLeft,
+  chevR: ChevronRight,
+  send: Send,
+  printer: Printer,
+  trophy: Trophy,
+  rocket: Rocket,
+  layers: Layers,
+};
+
+export function Icon({ name, className = 'h-5 w-5' }: { name: string; className?: string }) {
+  const Cmp = map[name] ?? Sparkles;
+  return <Cmp className={className} strokeWidth={1.7} aria-hidden="true" />;
+}

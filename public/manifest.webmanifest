@@ -1,0 +1,13 @@
+{
+  "name": "LIMON — Mamun Hossen Limon",
+  "short_name": "LIMON",
+  "description": "The digital identity of Limon (Mamun Hossen Limon), founder & creator of MeetBook. Building Ideas. Exploring Technology. Creating the Future.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#05060f",
+  "theme_color": "#05060f",
+  "icons": [
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
