@@ -169,3 +169,11 @@ textarea:focus-visible {
     max-width: 100% !important;
   }
 }
+
+/* Hide scrollbars on horizontally scrolling chrome (admin tab bar). */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

@@ -31,7 +31,9 @@ export default function ProjectsSection() {
                   <span className="glass absolute top-4 right-4 flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold text-slate-800 dark:text-white">
                     <span
                       className={`h-1.5 w-1.5 rounded-full ${
-                        p.id === 'meetbook' ? 'bg-emerald-500 animate-pulse-soft' : 'bg-violet-400'
+                        p.status.en.trim().toLowerCase() === 'live'
+                          ? 'bg-emerald-500 animate-pulse-soft'
+                          : 'bg-violet-400'
                       }`}
                     />
                     {t('statusLabel')}: {p.status[lang]}

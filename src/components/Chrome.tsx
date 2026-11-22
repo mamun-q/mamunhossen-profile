@@ -32,7 +32,7 @@ export function Reveal({
 export function SectionHeading({ kicker, title }: { kicker: string; title: string }) {
   return (
     <Reveal className="mx-auto mb-12 max-w-2xl text-center">
-      <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-brand dark:text-goldsoft">
+      <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-[#0b5ed7] dark:text-goldsoft">
         {kicker}
       </p>
       <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
@@ -47,7 +47,8 @@ export function SectionHeading({ kicker, title }: { kicker: string; title: strin
 
 export function Loader({ done }: { done: () => void }) {
   const { t } = usePrefs();
-  const { profile } = useContent();
+  const { profile, settings } = useContent();
+  const brand = settings.brandName || profile.brandName;
   const [show, setShow] = useState(() => {
     try {
       return !sessionStorage.getItem('limon-intro');
@@ -84,7 +85,7 @@ export function Loader({ done }: { done: () => void }) {
           aria-hidden="true"
         >
           <div className="flex overflow-hidden">
-            {profile.brandName.split('').map((ch, i) => (
+            {brand.split('').map((ch, i) => (
               <motion.span
                 key={i}
                 initial={{ y: '110%', opacity: 0 }}
@@ -179,7 +180,8 @@ const NAV_ITEMS = [
 
 export function Nav() {
   const { t, lang, toggleLang, theme, toggleTheme } = usePrefs();
-  const { profile } = useContent();
+  const { profile, settings } = useContent();
+  const brand = settings.brandName || profile.brandName;
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('home');
@@ -192,15 +194,38 @@ export function Nav() {
   }, []);
 
   useEffect(() => {
-    const sections = NAV_ITEMS.map((i) => document.getElementById(i.id)).filter(Boolean) as HTMLElement[];
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
       },
       { rootMargin: '-40% 0px -55% 0px' },
     );
-    sections.forEach((s) => io.observe(s));
-    return () => io.disconnect();
+    // Audit fix M3: Gallery and Contact are lazy chunks — their
+    // sections do not exist when this effect first runs, so a one-shot
+    // scan never observed them and their nav links never highlighted.
+    // Keep scanning (cheap: 7 id lookups) until every section exists.
+    const observed = new Set<string>();
+    let mo: MutationObserver | null = null;
+    const scan = () => {
+      for (const item of NAV_ITEMS) {
+        if (observed.has(item.id)) continue;
+        const el = document.getElementById(item.id);
+        if (el) {
+          observed.add(item.id);
+          io.observe(el);
+        }
+      }
+      if (observed.size === NAV_ITEMS.length && mo) mo.disconnect();
+    };
+    scan();
+    mo = new MutationObserver(scan);
+    mo.observe(document.body, { childList: true, subtree: true });
+    const stop = setTimeout(() => mo?.disconnect(), 15000);
+    return () => {
+      io.disconnect();
+      mo?.disconnect();
+      clearTimeout(stop);
+    };
   }, []);
 
   const linkCls = (id: string) =>
@@ -225,7 +250,7 @@ export function Nav() {
             L
           </span>
           <span className="text-lg font-bold tracking-[0.18em] text-slate-900 dark:text-white">
-            {profile.brandName}
+            {brand}
           </span>
         </a>
 
@@ -241,7 +266,7 @@ export function Nav() {
           <button
             type="button"
             onClick={toggleLang}
-            className="glass rounded-full px-3 py-2 text-xs font-semibold text-slate-700 transition hover:scale-105 dark:text-slate-100"
+            className="glass flex h-11 items-center rounded-full px-3.5 text-xs font-semibold text-slate-700 transition hover:scale-105 dark:text-slate-100"
             aria-label={lang === 'en' ? 'বাংলায় দেখুন' : 'View in English'}
           >
             {lang === 'en' ? 'বাংলা' : 'EN'}
@@ -249,7 +274,7 @@ export function Nav() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="glass flex h-9 w-9 items-center justify-center rounded-full text-slate-700 transition hover:scale-105 dark:text-amber-200"
+            className="glass flex h-11 w-11 items-center justify-center rounded-full text-slate-700 transition hover:scale-105 dark:text-amber-200"
             aria-label={theme === 'dark' ? t('themeLight') : t('themeDark')}
           >
             <Icon name={theme === 'dark' ? 'sun' : 'moon'} className="h-[18px] w-[18px]" />
@@ -257,8 +282,8 @@ export function Nav() {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="glass flex h-9 w-9 items-center justify-center rounded-full text-slate-700 lg:hidden dark:text-slate-100"
-            aria-label={open ? t('close') : 'Menu'}
+            className="glass flex h-11 w-11 items-center justify-center rounded-full text-slate-700 lg:hidden dark:text-slate-100"
+            aria-label={open ? t('close') : t('menu')}
             aria-expanded={open}
           >
             <Icon name={open ? 'x' : 'menu'} className="h-5 w-5" />
@@ -336,6 +361,7 @@ export function BackToTop() {
 export function Footer() {
   const { t, lang } = usePrefs();
   const { profile, socialLinks, settings } = useContent();
+  const brand = settings.brandName || profile.brandName;
   const [copied, setCopied] = useState(false);
 
   const share = async () => {
@@ -346,7 +372,10 @@ export function Footer() {
         return;
       }
       throw new Error('no native share');
-    } catch {
+    } catch (err) {
+      // Audit fix L4: a visitor CANCELLING the native share sheet
+      // (AbortError) must not fall through to "Link copied!".
+      if (err instanceof DOMException && err.name === 'AbortError') return;
       try {
         await navigator.clipboard.writeText(url);
         setCopied(true);
@@ -361,7 +390,7 @@ export function Footer() {
     <footer className="border-t border-slate-900/8 dark:border-white/8">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-10 text-center sm:px-6">
         <a href="#home" className="font-display text-xl font-bold tracking-[0.2em] text-slate-900 dark:text-white">
-          {profile.brandName}
+          {brand}
         </a>
         <p className="max-w-md text-sm text-slate-500 dark:text-slate-400">{profile.tagline[lang]}</p>
         <div className="flex flex-wrap items-center justify-center gap-2.5">
@@ -371,7 +400,7 @@ export function Footer() {
               href={l.href}
               target={l.href.startsWith('http') ? '_blank' : undefined}
               rel={l.href.startsWith('http') ? 'noreferrer' : undefined}
-              className="glass flex h-10 w-10 items-center justify-center rounded-full text-slate-600 transition hover:scale-110 hover:text-brand dark:text-slate-300 dark:hover:text-white"
+              className="glass flex h-11 w-11 items-center justify-center rounded-full text-slate-600 transition hover:scale-110 hover:text-brand dark:text-slate-300 dark:hover:text-white"
               aria-label={l.label}
             >
               <Icon name={l.icon} className="h-[18px] w-[18px]" />
@@ -380,15 +409,15 @@ export function Footer() {
           <button
             type="button"
             onClick={share}
-            className="glass flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium text-slate-600 transition hover:scale-105 hover:text-brand dark:text-slate-300 dark:hover:text-white"
+            className="glass flex h-11 items-center gap-2 rounded-full px-4 text-sm font-medium text-slate-600 transition hover:scale-105 hover:text-brand dark:text-slate-300 dark:hover:text-white"
             aria-label={t('share')}
           >
             <Icon name={copied ? 'check' : 'share'} className="h-[18px] w-[18px]" />
             {copied ? t('shareCopied') : t('share')}
           </button>
         </div>
-        <p className="text-xs text-slate-400 dark:text-slate-500">
-          © 2026 {profile.fullName} · {profile.location[lang]} · {t('footerNote')}
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          © {new Date().getFullYear()} {profile.fullName} · {profile.location[lang]} · {t('footerNote')}
         </p>
       </div>
     </footer>

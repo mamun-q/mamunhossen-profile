@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContent } from '../content';
@@ -24,7 +24,12 @@ type FormStatus = 'idle' | 'sending' | 'sent' | 'error';
  */
 export default function ContactSection() {
   const { t, lang } = usePrefs();
-  const { profile, socialLinks } = useContent();
+  const { profile, settings, socialLinks } = useContent();
+  // Audit fix M2: the Settings "Contact email" is the single source
+  // of truth for the contact card + mailto fallback (profile.email
+  // remains the fallback and the CV's address).
+  const contactEmail = settings.contactEmail || profile.email;
+  const sendingRef = useRef(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -44,11 +49,15 @@ export default function ContactSection() {
   const buildMailto = (): string => {
     const subject = encodeURIComponent(`Message from ${name.trim()} — LIMON website`);
     const body = encodeURIComponent(`${message.trim()}\n\n— ${name.trim()} (${email.trim()})`);
-    return `mailto:${profile.email}?subject=${subject}&body=${body}`;
+    return `mailto:${contactEmail}?subject=${subject}&body=${body}`;
   };
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    // Audit fix L3: in-flight guard — a double-tap (or Enter) during
+    // a slow send used to insert the same message twice, because the
+    // disabled button only takes effect after a re-render.
+    if (sendingRef.current) return;
     // Honeypot: a human never fills this hidden field. If it has a
     // value, silently pretend success and drop the submission.
     if (honeypot) {
@@ -56,6 +65,7 @@ export default function ContactSection() {
       return;
     }
     if (!validate()) return;
+    sendingRef.current = true;
     setStatus('sending');
     try {
       const { getSupabase } = await import('../lib/supabase');
@@ -73,6 +83,8 @@ export default function ContactSection() {
       setStatus('sent');
     } catch {
       setStatus('error');
+    } finally {
+      sendingRef.current = false;
     }
   };
 
@@ -98,7 +110,7 @@ export default function ContactSection() {
                 {t('directContact')}
               </h3>
               <a
-                href={`mailto:${profile.email}`}
+                href={`mailto:${contactEmail}`}
                 className="mt-5 flex items-center gap-3.5 rounded-2xl border border-slate-900/8 p-4 transition hover:border-brand/50 dark:border-white/10"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand2 text-white">
@@ -106,10 +118,10 @@ export default function ContactSection() {
                 </span>
                 <span className="min-w-0">
                   <span className="block text-xs tracking-wide text-slate-500 uppercase dark:text-slate-400">
-                    Email
+                    {t('emailLabel')}
                   </span>
                   <span className="block truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
-                    {profile.email}
+                    {contactEmail}
                   </span>
                 </span>
               </a>

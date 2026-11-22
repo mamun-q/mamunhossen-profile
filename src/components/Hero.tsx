@@ -8,7 +8,8 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   const { t, lang } = usePrefs();
-  const { profile } = useContent();
+  const { profile, settings } = useContent();
+  const brand = settings.brandName || profile.brandName;
 
   return (
     <section id="home" className="relative flex min-h-svh items-center overflow-hidden">
@@ -60,7 +61,7 @@ export default function Hero() {
             transition={{ delay: 0.25, duration: 0.85, ease }}
             className="font-display text-gradient mt-2 text-[clamp(4.2rem,17vw,10.5rem)] leading-[0.95] font-bold tracking-[0.04em] drop-shadow-[0_10px_45px_rgba(24,119,242,0.35)]"
           >
-            {profile.brandName}
+            {brand}
           </motion.h1>
 
           <motion.p

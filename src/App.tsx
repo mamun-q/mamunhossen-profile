@@ -1,4 +1,5 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Component, Suspense, lazy, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { ContentProvider } from './content';
 import { PrefsProvider } from './prefs';
 import { BackToTop, CustomCursor, Footer, Loader, Nav } from './components/Chrome';
@@ -19,9 +20,42 @@ type Route = 'home' | 'cv' | 'admin';
 function routeFromHash(): Route {
   if (typeof window === 'undefined') return 'home';
   const hash = window.location.hash;
-  if (hash.startsWith('#/admin')) return 'admin';
-  if (hash.startsWith('#/cv')) return 'cv';
+  // Audit fix L10: exact routes only — '#/cvx' or '#/administrator'
+  // used to render the CV / admin sign-in.
+  if (hash === '#/admin' || hash === '#/admin/') return 'admin';
+  if (hash === '#/cv' || hash === '#/cv/') return 'cv';
   return 'home';
+}
+
+/**
+ * Last-resort render guard (audit H1, second line of defence): if any
+ * section ever throws while rendering, show a recoverable message
+ * instead of a white screen.
+ */
+class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError(): { failed: boolean } {
+    return { failed: true };
+  }
+  render() {
+    if (this.state.failed) {
+      return (
+        <main className="flex min-h-svh items-center justify-center px-4 text-center">
+          <div>
+            <p className="text-lg font-semibold">Something went wrong while loading this page.</p>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="mt-4 rounded-full bg-gradient-to-r from-brand to-brand2 px-5 py-2.5 text-sm font-semibold text-white"
+            >
+              Reload
+            </button>
+          </div>
+        </main>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function Site() {
@@ -89,7 +123,9 @@ export default function App() {
   return (
     <PrefsProvider>
       <ContentProvider>
-        <Site />
+        <ErrorBoundary>
+          <Site />
+        </ErrorBoundary>
       </ContentProvider>
     </PrefsProvider>
   );

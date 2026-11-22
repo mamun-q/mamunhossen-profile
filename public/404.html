@@ -16,7 +16,12 @@
       // (keeping the repo subpath on GitHub Pages), where the SPA lives.
       (function () {
         var seg = location.pathname.split('/').filter(Boolean);
-        var root = location.origin + (seg.length ? '/' + seg[0] + '/' : '/');
+        // Audit fix M4: the first segment is the repo subpath ONLY on
+        // *.github.io project pages. On a root custom domain it is
+        // part of the missing path itself — using it as the root made
+        // this page redirect to itself forever.
+        var isProjectPages = /\.github\.io$/.test(location.hostname);
+        var root = location.origin + (isProjectPages && seg.length ? '/' + seg[0] + '/' : '/');
         setTimeout(function () { location.replace(root); }, 1600);
         document.addEventListener('DOMContentLoaded', function () {
           document.getElementById('home-link').setAttribute('href', root);

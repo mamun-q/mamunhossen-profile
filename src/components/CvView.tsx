@@ -10,7 +10,8 @@ import { Icon } from './icons';
  */
 export default function CvView() {
   const { t, lang } = usePrefs();
-  const { profile, projects, skills, socialLinks } = useContent();
+  const { profile, projects, settings, skills, socialLinks } = useContent();
+  const brand = settings.brandName || profile.brandName;
 
   return (
     <div className="min-h-svh bg-slate-100 px-4 py-8 dark:bg-ink">
@@ -44,7 +45,7 @@ export default function CvView() {
           <div className="min-w-52 flex-1">
             <p className="text-xs font-semibold tracking-[0.3em] text-slate-500 uppercase">{t('cvTitle')}</p>
             <h1 className="font-display mt-1 text-3xl font-bold text-slate-900">
-              {profile.brandName} — {profile.fullName}
+              {brand} — {profile.fullName}
             </h1>
             <p className="mt-1 font-medium text-[#1877f2]">{profile.role[lang]}</p>
             <p className="mt-1 text-sm text-slate-500">

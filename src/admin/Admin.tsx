@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { Inbox, LogOut } from 'lucide-react';
@@ -46,8 +47,18 @@ export default function AdminApp() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [user, setUser] = useState<User | null>(null);
   const [denied, setDenied] = useState(false);
+  // Audit fix M1: once a user is verified, later auth events for the
+  // SAME user (TOKEN_REFRESHED fires ~hourly, plus the listener and
+  // getSession both firing on load) must not re-enter 'checking' —
+  // the render gate would unmount the dashboard and destroy every
+  // unsaved edit in it.
+  const verifiedFor = useRef<string | null>(null);
 
   const verifyAdmin = useCallback(async (u: User) => {
+    if (verifiedFor.current === u.id) {
+      setPhase('ready');
+      return;
+    }
     setPhase('checking');
     try {
       const supabase = getSupabase();
@@ -58,6 +69,7 @@ export default function AdminApp() {
         .maybeSingle();
       const role = (data as { role?: unknown } | null)?.role;
       if (!error && (role === 'admin' || role === 'superadmin')) {
+        verifiedFor.current = u.id;
         setDenied(false);
         setPhase('ready');
         return;
@@ -65,6 +77,7 @@ export default function AdminApp() {
     } catch {
       /* fall through to denied */
     }
+    verifiedFor.current = null;
     setDenied(true);
     try {
       await getSupabase().auth.signOut();
@@ -86,12 +99,15 @@ export default function AdminApp() {
         setPhase('signed-out');
       }
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted) return;
       if (session?.user) {
         setUser(session.user);
-        void verifyAdmin(session.user);
+        // A token refresh changes nothing about who this is — never
+        // re-verify (see M1 above).
+        if (event !== 'TOKEN_REFRESHED') void verifyAdmin(session.user);
       } else {
+        verifiedFor.current = null;
         setUser(null);
         setPhase((p) => (p === 'ready' || p === 'checking' ? 'signed-out' : p));
       }
@@ -138,9 +154,13 @@ function SignIn({ denied, onAttempt }: { denied: boolean; onAttempt: () => void 
       email: email.trim(),
       password,
     });
-    setBusy(false);
-    if (signInError) setError(signInError.message);
-    // On success, AdminApp's auth listener verifies the admin role.
+    // Audit fix L14: on success the form STAYS disabled — AdminApp's
+    // auth listener is verifying the admin role and will replace
+    // this screen; re-enabling here allowed a confusing double submit.
+    if (signInError) {
+      setBusy(false);
+      setError(signInError.message);
+    }
   };
 
   return (
@@ -335,7 +355,7 @@ function Dashboard({ user }: { user: User }) {
 
 interface EditorProps {
   content: SiteContent;
-  setContent: (c: SiteContent) => void;
+  setContent: Dispatch<SetStateAction<SiteContent>>;
   save: (key: ContentKey) => Promise<void>;
 }
 
@@ -384,7 +404,9 @@ function ProfileEditor({ content, setContent, save }: EditorProps) {
           value={p.portraitUrl}
           onChange={(v) => setP({ portraitUrl: v })}
         />
-        <TextField label="Site URL" value={p.siteUrl} onChange={(v) => setP({ siteUrl: v })} />
+        {/* Audit fix M2: no "Site URL" field here — profile.siteUrl
+            was saved but read by nothing. The live site URL lives in
+            Settings (it drives the footer Share button). */}
       </div>
 
       <div className="mt-8">
@@ -449,8 +471,15 @@ function ProfileEditor({ content, setContent, save }: EditorProps) {
 
 /* ---------------- Projects ---------------- */
 
-function TechField({ value, onCommit }: { value: string[]; onCommit: (v: string[]) => void }) {
+function TechField({ value, onCommit, itemKey }: { value: string[]; onCommit: (v: string[]) => void; itemKey: string }) {
   const [text, setText] = useState(value.join(', '));
+  // Audit fix L6: re-sync the local text when the editor switches to
+  // a different project — the stale text of the previous project
+  // could otherwise be committed over this one's tech list on blur.
+  useEffect(() => {
+    setText(value.join(', '));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemKey]);
   return (
     <Field label="Technologies (comma separated)">
       <input
@@ -507,7 +536,7 @@ function ProjectsEditor({ content, setContent, save }: EditorProps) {
               onChange={(v) => setProject(i, { ...proj, description: v })}
             />
             <LTextField label="Status" value={proj.status} onChange={(v) => setProject(i, { ...proj, status: v })} />
-            <TechField value={proj.tech} onCommit={(v) => setProject(i, { ...proj, tech: v })} />
+            <TechField itemKey={proj.id} value={proj.tech} onCommit={(v) => setProject(i, { ...proj, tech: v })} />
             <div className="grid gap-4 sm:grid-cols-2">
               <TextField
                 label="Live demo URL (blank = no button)"
@@ -625,22 +654,26 @@ function GalleryEditor({ content, setContent, save }: EditorProps) {
   const [uploadError, setUploadError] = useState('');
 
   const setItem = (i: number, item: GalleryItem) =>
-    setContent({ ...content, gallery: content.gallery.map((x, j) => (j === i ? item : x)) });
+    setContent((prev) => ({ ...prev, gallery: prev.gallery.map((x, j) => (j === i ? item : x)) }));
 
+  // Audit fix H2: functional update — the multi-file upload loop
+  // awaits each Cloudinary upload and calls addItem again; building
+  // from the render-scope `content` snapshot made every iteration
+  // overwrite the previous one, so only the LAST photo survived.
   const addItem = (src: string, category: string) =>
-    setContent({
-      ...content,
+    setContent((prev) => ({
+      ...prev,
       gallery: [
-        ...content.gallery,
+        ...prev.gallery,
         {
-          id: `photo-${Date.now().toString(36)}-${content.gallery.length}`,
+          id: `photo-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
           src,
           thumb: src,
           alt: { en: '', bn: '' },
           category: category.trim() || 'Portrait',
         },
       ],
-    });
+    }));
 
   const onFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -986,9 +1019,14 @@ function MessagesInbox({ onUnreadChange }: { onUnreadChange: (n: number) => void
       .update({ read: !m.read })
       .eq('id', m.id);
     if (!updErr) {
-      const next = messages.map((x) => (x.id === m.id ? { ...x, read: !x.read } : x));
-      setMessages(next);
-      onUnreadChange(next.filter((x) => !x.read).length);
+      // Audit fix L5: functional update — computing from the
+      // render-scope `messages` let a slower action on another
+      // message overwrite this one's already-applied change.
+      setMessages((prev) => {
+        const next = prev.map((x) => (x.id === m.id ? { ...x, read: !x.read } : x));
+        onUnreadChange(next.filter((x) => !x.read).length);
+        return next;
+      });
     }
     setBusyId(null);
   };
@@ -999,9 +1037,11 @@ function MessagesInbox({ onUnreadChange }: { onUnreadChange: (n: number) => void
     const supabase = getSupabase();
     const { error: delErr } = await supabase.from('site_messages').delete().eq('id', m.id);
     if (!delErr) {
-      const next = messages.filter((x) => x.id !== m.id);
-      setMessages(next);
-      onUnreadChange(next.filter((x) => !x.read).length);
+      setMessages((prev) => {
+        const next = prev.filter((x) => x.id !== m.id);
+        onUnreadChange(next.filter((x) => !x.read).length);
+        return next;
+      });
     }
     setBusyId(null);
   };
