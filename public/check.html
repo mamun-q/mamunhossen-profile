@@ -12,113 +12,152 @@
         background: #0b0e1a;
         color: #fff;
       }
-      button {
-        display: block;
-        width: 100%;
-        padding: 22px;
-        font-size: 20px;
-        font-weight: 700;
-        border: 0;
-        border-radius: 14px;
-        background: #2563eb;
-        color: #fff;
-      }
       .box {
         background: #171b30;
         border-radius: 12px;
         padding: 14px;
         margin-top: 16px;
         word-break: break-all;
-        font-size: 14px;
-        line-height: 1.6;
+        font-size: 15px;
+        line-height: 1.7;
       }
-      .tall {
-        margin-top: 16px;
-        background: linear-gradient(#7b61ff, #2563eb);
-        border-radius: 12px;
-        padding: 14px;
-        font-size: 18px;
+      .big {
+        font-size: 20px;
+        font-weight: 700;
       }
     </style>
   </head>
   <body>
     <h1>Site check page</h1>
-    <p>1) Tap the blue button a few times — the number must go up.</p>
-    <button id="tapBtn" type="button">TAP ME — taps: <span id="count">0</span></button>
-    <div class="box" id="info">Reading info…</div>
-    <p>2) Tap this button to test the MAIN site from inside your phone:</p>
-    <button id="deepBtn" type="button" style="background: #7b61ff">TEST MAIN SITE</button>
-    <div class="box" id="deep">Main-site test not run yet.</div>
-    <p>3) Now scroll down — the page must move.</p>
-    <div class="tall" style="height: 900px">Scroll test area — keep scrolling…</div>
-    <div class="tall" style="height: 900px">Almost there…</div>
-    <div class="box">✅ You reached the bottom — scrolling works on this page.</div>
-    <script>
-      var n = 0;
-      document.getElementById('tapBtn').addEventListener('click', function () {
-        n += 1;
-        document.getElementById('count').textContent = String(n);
-      });
-      var info = document.getElementById('info');
-      info.innerHTML = 'Browser: ' + navigator.userAgent + '<br>Checking which version of the main site your phone receives…';
-      fetch('./', { cache: 'no-store' })
-        .then(function (r) {
-          return r.text();
-        })
-        .then(function (html) {
-          var m = html.match(/assets\/index-[A-Za-z0-9_-]+\.js/);
-          info.innerHTML =
-            'Browser: ' +
-            navigator.userAgent +
-            '<br>Main site version: <b>' +
-            (m ? m[0] : 'not found') +
-            '</b>';
-        })
-        .catch(function (e) {
-          info.innerHTML = 'Browser: ' + navigator.userAgent + '<br>Version check failed: ' + e;
-        });
+    <p class="big" id="status">⏳ পরীক্ষা চলছে… একটু অপেক্ষা করো, কিছু চাপ দিতে হবে না।</p>
+    <div class="box" id="report">মূল সাইটটা ভেতরে লোড হচ্ছে…</div>
 
-      document.getElementById('deepBtn').addEventListener('click', function () {
-        var deep = document.getElementById('deep');
-        deep.textContent = 'Loading the main site inside this page… wait ~6 seconds.';
-        var frame = document.createElement('iframe');
-        frame.style.width = '100%';
-        frame.style.height = '480px';
-        frame.style.border = '2px solid #7b61ff';
-        frame.style.marginTop = '12px';
-        frame.src = './';
-        document.body.appendChild(frame);
-        setTimeout(function () {
-          try {
-            var w = frame.contentWindow;
-            var d = frame.contentDocument;
-            var lines = [];
-            var se = d.scrollingElement;
-            lines.push('page height: ' + (se ? se.scrollHeight : '?') + ' / screen: ' + w.innerHeight);
-            var el = d.elementFromPoint(w.innerWidth / 2, w.innerHeight / 2);
-            lines.push('middle of screen shows: ' + (el ? el.tagName + ' ' + String(el.className).slice(0, 40) : 'nothing'));
-            lines.push('body overflowY: ' + w.getComputedStyle(d.body).overflowY);
-            w.scrollTo(0, 800);
-            setTimeout(function () {
-              lines.push('scroll after try: ' + Math.round(w.scrollY));
-              var btns = d.querySelectorAll('header button');
-              lines.push('top buttons found: ' + btns.length);
-              if (btns.length > 1) {
-                var beforeCls = d.documentElement.className;
-                btns[1].click();
-                setTimeout(function () {
-                  lines.push('theme button works: ' + (d.documentElement.className !== beforeCls ? 'YES' : 'NO'));
-                  deep.innerHTML = lines.join('<br>');
-                }, 600);
-              } else {
-                deep.innerHTML = lines.join('<br>');
-              }
-            }, 600);
-          } catch (e) {
-            deep.textContent = 'Main-site test error: ' + e;
+    <script>
+      var SB_URL = 'https://ouyuijpxhhvtnxnvavza.supabase.co/rest/v1/site_messages';
+      var SB_KEY = 'sb_publishable_-hldx2wyXfAjxFLAZf4sHA_uu72VfTn';
+      var statusEl = document.getElementById('status');
+      var reportEl = document.getElementById('report');
+
+      function sendReport(text) {
+        return fetch(SB_URL, {
+          method: 'POST',
+          headers: {
+            apikey: SB_KEY,
+            Authorization: 'Bearer ' + SB_KEY,
+            'Content-Type': 'application/json',
+            Prefer: 'return=minimal',
+          },
+          body: JSON.stringify({
+            id: 'msg_diag_' + Date.now().toString(36),
+            name: 'Auto diagnostic',
+            email: 'check@local',
+            message: text.slice(0, 1900),
+            createdAt: Date.now(),
+          }),
+        });
+      }
+
+      var frame = document.createElement('iframe');
+      frame.style.width = '100%';
+      frame.style.height = '480px';
+      frame.style.border = '2px solid #7b61ff';
+      frame.style.marginTop = '12px';
+      frame.src = './';
+      document.body.appendChild(frame);
+
+      var tries = 0;
+      var timer = setInterval(function () {
+        tries += 1;
+        var ready = false;
+        try {
+          var d = frame.contentDocument;
+          ready = !!(d && d.querySelector('header') && d.querySelector('main'));
+        } catch (e) {
+          /* not ready */
+        }
+        if (ready) {
+          clearInterval(timer);
+          setTimeout(measure, 2500);
+        } else if (tries > 30) {
+          clearInterval(timer);
+          var msg = 'DIAG TIMEOUT: main site did not render inside frame after 30s. UA: ' + navigator.userAgent;
+          reportEl.textContent = msg;
+          statusEl.textContent = '⚠️ সাইট ভেতরে লোডই হয়নি — রিপোর্ট পাঠানো হচ্ছে…';
+          sendReport(msg)
+            .then(function () {
+              statusEl.textContent = '✅ হয়ে গেছে — এখন এই পেজ বন্ধ করতে পারো।';
+            })
+            .catch(function () {
+              statusEl.textContent = '✅ পরীক্ষা শেষ — এই লেখাটার স্ক্রিনশট দাও।';
+            });
+        }
+      }, 1000);
+
+      function measure() {
+        try {
+          var w = frame.contentWindow;
+          var d = frame.contentDocument;
+          var lines = [];
+          lines.push('UA: ' + navigator.userAgent);
+          var se = d.scrollingElement;
+          lines.push('scrollHeight: ' + (se ? se.scrollHeight : '?') + ' innerHeight: ' + w.innerHeight);
+          lines.push('overflow html: ' + w.getComputedStyle(d.documentElement).overflow + ' / ' + w.getComputedStyle(d.documentElement).overflowX + ',' + w.getComputedStyle(d.documentElement).overflowY);
+          lines.push('overflow body: ' + w.getComputedStyle(d.body).overflow + ' / ' + w.getComputedStyle(d.body).overflowX + ',' + w.getComputedStyle(d.body).overflowY);
+          var root = d.getElementById('root');
+          if (root) lines.push('overflow #root: ' + w.getComputedStyle(root).overflowX + ',' + w.getComputedStyle(root).overflowY);
+          var stack = d.elementsFromPoint(w.innerWidth / 2, w.innerHeight / 2);
+          var names = [];
+          for (var i = 0; i < Math.min(stack.length, 6); i++) {
+            var e = stack[i];
+            names.push(e.tagName + '.' + String(e.className && e.className.baseVal !== undefined ? e.className.baseVal : e.className).slice(0, 45));
           }
-        }, 6000);
-      });
+          lines.push('centre stack: ' + names.join(' > '));
+          // Anything fixed/absolute covering almost the whole viewport?
+          var covers = [];
+          var all = d.querySelectorAll('body *');
+          for (var j = 0; j < all.length; j++) {
+            var el = all[j];
+            var cs = w.getComputedStyle(el);
+            if (cs.position !== 'fixed' && cs.position !== 'absolute') continue;
+            var r = el.getBoundingClientRect();
+            if (r.width >= w.innerWidth * 0.95 && r.height >= w.innerHeight * 0.95) {
+              covers.push(el.tagName + '.' + String(el.className).slice(0, 45) + ' z=' + cs.zIndex + ' pe=' + cs.pointerEvents + ' op=' + cs.opacity);
+            }
+          }
+          lines.push('fullscreen covers: ' + (covers.length ? covers.join(' | ') : 'none'));
+          w.scrollTo(0, 800);
+          setTimeout(function () {
+            lines.push('scrollY after scrollTo(0,800): ' + Math.round(w.scrollY));
+            var btns = d.querySelectorAll('header button');
+            lines.push('header buttons: ' + btns.length);
+            if (btns.length > 1) {
+              var beforeCls = d.documentElement.className;
+              btns[1].click();
+              setTimeout(function () {
+                lines.push('theme click works: ' + (d.documentElement.className !== beforeCls ? 'YES' : 'NO'));
+                finish(lines);
+              }, 700);
+            } else {
+              finish(lines);
+            }
+          }, 700);
+        } catch (e) {
+          finish(['DIAG ERROR: ' + e, 'UA: ' + navigator.userAgent]);
+        }
+      }
+
+      function finish(lines) {
+        var text = lines.join('\n');
+        reportEl.innerHTML = lines.join('<br>');
+        statusEl.textContent = '⏳ রিপোর্ট পাঠানো হচ্ছে…';
+        sendReport('AUTO-DIAG\n' + text)
+          .then(function () {
+            statusEl.textContent = '✅ হয়ে গেছে — এখন এই পেজ বন্ধ করতে পারো।';
+          })
+          .catch(function () {
+            statusEl.textContent = '✅ পরীক্ষা শেষ — এই লেখাটার স্ক্রিনশট দাও।';
+          });
+      }
     </script>
   </body>
 </html>
