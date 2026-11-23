@@ -59,5 +59,88 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- TEMP DIAGNOSTIC (2026-11-23, remove after the Firefox-Android
+         freeze is identified): measures the REAL top-level page on
+         the visitor's phone — scroll height, what covers the centre
+         of the screen, computed touch-action, whether scrolling ever
+         happened — and posts the result to the site inbox. -->
+    <script>
+      (function () {
+        var maxScroll = 0;
+        var touches = 0;
+        addEventListener(
+          'scroll',
+          function () {
+            if (window.scrollY > maxScroll) maxScroll = window.scrollY;
+          },
+          { passive: true },
+        );
+        addEventListener(
+          'touchstart',
+          function () {
+            touches += 1;
+          },
+          { passive: true },
+        );
+        setTimeout(function () {
+          try {
+            var el = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
+            var covers = [];
+            var all = document.querySelectorAll('body *');
+            for (var i = 0; i < all.length; i++) {
+              var e = all[i];
+              var cs = getComputedStyle(e);
+              if (cs.position !== 'fixed' && cs.position !== 'absolute') continue;
+              var r = e.getBoundingClientRect();
+              if (r.width >= window.innerWidth * 0.95 && r.height >= window.innerHeight * 0.95) {
+                covers.push(
+                  e.tagName +
+                    '.' +
+                    String(e.className).slice(0, 40) +
+                    ' z=' +
+                    cs.zIndex +
+                    ' pe=' +
+                    cs.pointerEvents +
+                    ' ta=' +
+                    cs.touchAction,
+                );
+              }
+            }
+            var info = {
+              ua: navigator.userAgent,
+              sh: document.scrollingElement ? document.scrollingElement.scrollHeight : -1,
+              ih: window.innerHeight,
+              maxScroll: Math.round(maxScroll),
+              touches: touches,
+              centre: el ? el.tagName + '.' + String(el.className).slice(0, 50) : 'none',
+              centreTA: el ? getComputedStyle(el).touchAction : '?',
+              bodyTA: getComputedStyle(document.body).touchAction,
+              vis: document.visibilityState,
+              covers: covers.join(' | ') || 'none',
+            };
+            fetch('https://ouyuijpxhhvtnxnvavza.supabase.co/rest/v1/site_messages', {
+              method: 'POST',
+              headers: {
+                apikey: 'sb_publishable_-hldx2wyXfAjxFLAZf4sHA_uu72VfTn',
+                Authorization: 'Bearer sb_publishable_-hldx2wyXfAjxFLAZf4sHA_uu72VfTn',
+                'Content-Type': 'application/json',
+                Prefer: 'return=minimal',
+              },
+              body: JSON.stringify({
+                id: 'msg_diag_' + Date.now().toString(36),
+                name: 'Top-level diag',
+                email: 'check@local',
+                message: ('TOPDIAG ' + JSON.stringify(info)).slice(0, 1900),
+                createdAt: Date.now(),
+              }),
+            }).catch(function () {
+              /* offline / blocked: stay silent */
+            });
+          } catch (err) {
+            /* diagnostic must never break the page */
+          }
+        }, 7000);
+      })();
+    </script>
   </body>
 </html>
