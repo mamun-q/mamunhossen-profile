@@ -54,28 +54,49 @@ export function CustomCursor() {
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
+    // P-03: respect prefers-reduced-motion — no trailing ring
+    // animation at all (the elements would otherwise sit parked
+    // at the top-left corner).
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      dot.style.display = 'none';
+      ring.style.display = 'none';
+      return;
+    }
 
     let x = -100;
     let y = -100;
     let rx = -100;
     let ry = -100;
     let raf = 0;
+    let looping = false;
 
+    const loop = () => {
+      rx += (x - rx) * 0.16;
+      ry += (y - ry) * 0.16;
+      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+      // P-03: stop the rAF loop once the ring has converged on the
+      // pointer instead of spinning forever while the mouse is idle.
+      if (Math.abs(x - rx) < 0.1 && Math.abs(y - ry) < 0.1) {
+        looping = false;
+        return;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    const kick = () => {
+      if (!looping) {
+        looping = true;
+        raf = requestAnimationFrame(loop);
+      }
+    };
     const onMove = (e: MouseEvent) => {
       x = e.clientX;
       y = e.clientY;
       dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
       const target = e.target as HTMLElement | null;
       ring.classList.toggle('is-active', !!target?.closest('a, button, input, textarea, [data-hover]'));
-    };
-    const loop = () => {
-      rx += (x - rx) * 0.16;
-      ry += (y - ry) * 0.16;
-      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
-      raf = requestAnimationFrame(loop);
+      kick();
     };
     window.addEventListener('mousemove', onMove, { passive: true });
-    raf = requestAnimationFrame(loop);
     return () => {
       window.removeEventListener('mousemove', onMove);
       cancelAnimationFrame(raf);
@@ -109,6 +130,21 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('home');
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
+
+  // P-06: Escape closes the mobile menu and returns focus to the
+  // button that opened it (keyboard / switch-device users).
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        menuBtnRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open ]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -206,10 +242,12 @@ export function Nav() {
           </button>
           <button
             type="button"
+            ref={menuBtnRef}
             onClick={() => setOpen((v) => !v)}
             className="glass flex h-11 w-11 items-center justify-center rounded-full text-slate-700 lg:hidden dark:text-slate-100"
             aria-label={open ? t('close') : t('menu')}
             aria-expanded={open}
+            aria-controls="mobile-menu"
           >
             <Icon name={open ? 'x' : 'menu'} className="h-5 w-5" />
           </button>
@@ -219,6 +257,7 @@ export function Nav() {
       <AnimatePresence>
         {open && (
           <motion.nav
+            id="mobile-menu"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}

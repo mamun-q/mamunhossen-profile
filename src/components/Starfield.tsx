@@ -74,8 +74,14 @@ export default function Starfield({ className = '' }: { className?: string }) {
       }
     };
 
+    let lastFrame = 0;
     const tick = (time: number) => {
-      if (running && visible) {
+      // P-05: on narrow (phone) viewports, cap the starfield at
+      // ~30fps — the twinkle/drift reads identically, at roughly
+      // half the canvas cost and battery.
+      const frameGap = w < 640 ? 33 : 0;
+      if (running && visible && time - lastFrame >= frameGap) {
+        lastFrame = time;
         for (const s of stars) {
           s.y -= s.speed;
           s.x += s.drift;
