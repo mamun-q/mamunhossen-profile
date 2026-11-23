@@ -44,7 +44,7 @@ export default function Hero() {
                 fetchPriority="high"
               />
             </div>
-            <span className="glass animate-float absolute -right-3 -bottom-2 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold text-slate-700 dark:text-slate-100">
+            <span className="glass absolute -right-3 -bottom-2 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold text-slate-700 dark:text-slate-100">
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse-soft" />
               {profile.location[lang]}
             </span>
@@ -104,28 +104,45 @@ export default function Hero() {
             transition={{ delay: 0.8, duration: 0.75, ease }}
             className="mt-9 flex flex-wrap items-center justify-center gap-3"
           >
+            {/* Designer pack: ONE primary action — the live
+                product. Everything else is a quiet text link. */}
             <a
-              href="#about"
-              className="btn-glow font-display inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-brand to-brand2 px-6 py-3.5 text-sm font-semibold text-white"
+              href="https://mamun-q.github.io/MeetBook/"
+              target="_blank"
+              rel="noreferrer"
+              className="btn-glow font-display inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-brand to-brand2 px-7 py-3.5 text-sm font-semibold text-white"
             >
-              {t('explore')}
-              <Icon name="arrowDown" className="h-4 w-4" />
+              {t('viewMeetBook')}
+              <Icon name="external" className="h-4 w-4" />
             </a>
-            <a
-              href="#contact"
-              className="glass font-display inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-slate-800 transition hover:scale-[1.03] dark:text-white"
-            >
-              <Icon name="mail" className="h-4 w-4" />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.95, duration: 0.7 }}
+            className="font-display mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-slate-500 dark:text-slate-400"
+          >
+            <a href="#about" className="transition hover:text-brand dark:hover:text-sky-300">
+              {t('explore')}
+            </a>
+            <a href="#contact" className="transition hover:text-brand dark:hover:text-sky-300">
               {t('contactMe')}
             </a>
-            <a
-              href="#/cv"
-              className="glass font-display inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-slate-800 transition hover:scale-[1.03] dark:text-white"
-            >
-              <Icon name="download" className="h-4 w-4" />
+            <a href="#/cv" className="transition hover:text-brand dark:hover:text-sky-300">
               {t('downloadCv')}
             </a>
           </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.1, duration: 0.7 }}
+            className="mt-7 inline-flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400"
+          >
+            <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse-soft" />
+            {t('nowBuilding')}
+          </motion.p>
 
           <motion.a
             href="#about"

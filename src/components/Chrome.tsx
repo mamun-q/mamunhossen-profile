@@ -43,74 +43,6 @@ export function SectionHeading({ kicker, title }: { kicker: string; title: strin
   );
 }
 
-/* ---------------- Custom cursor (fine pointers only) ---------------- */
-
-export function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!window.matchMedia('(pointer: fine)').matches) return;
-    const dot = dotRef.current;
-    const ring = ringRef.current;
-    if (!dot || !ring) return;
-    // P-03: respect prefers-reduced-motion — no trailing ring
-    // animation at all (the elements would otherwise sit parked
-    // at the top-left corner).
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      dot.style.display = 'none';
-      ring.style.display = 'none';
-      return;
-    }
-
-    let x = -100;
-    let y = -100;
-    let rx = -100;
-    let ry = -100;
-    let raf = 0;
-    let looping = false;
-
-    const loop = () => {
-      rx += (x - rx) * 0.16;
-      ry += (y - ry) * 0.16;
-      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
-      // P-03: stop the rAF loop once the ring has converged on the
-      // pointer instead of spinning forever while the mouse is idle.
-      if (Math.abs(x - rx) < 0.1 && Math.abs(y - ry) < 0.1) {
-        looping = false;
-        return;
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    const kick = () => {
-      if (!looping) {
-        looping = true;
-        raf = requestAnimationFrame(loop);
-      }
-    };
-    const onMove = (e: MouseEvent) => {
-      x = e.clientX;
-      y = e.clientY;
-      dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-      const target = e.target as HTMLElement | null;
-      ring.classList.toggle('is-active', !!target?.closest('a, button, input, textarea, [data-hover]'));
-      kick();
-    };
-    window.addEventListener('mousemove', onMove, { passive: true });
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  return (
-    <>
-      <div ref={dotRef} className="cursor-dot" aria-hidden="true" />
-      <div ref={ringRef} className="cursor-ring" aria-hidden="true" />
-    </>
-  );
-}
-
 /* ---------------- Navigation ---------------- */
 
 const NAV_ITEMS = [
@@ -119,7 +51,6 @@ const NAV_ITEMS = [
   { id: 'skills', key: 'navSkills' },
   { id: 'projects', key: 'navProjects' },
   { id: 'world', key: 'navWorld' },
-  { id: 'gallery', key: 'navGallery' },
   { id: 'contact', key: 'navContact' },
 ] as const;
 

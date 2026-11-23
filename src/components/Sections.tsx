@@ -48,7 +48,6 @@ export function SkillsSection() {
           {skills.map((skill, i) => (
             <Reveal key={skill.id} delay={(i % 3) * 0.08}>
               <article className="group glass card-hover relative h-full overflow-hidden rounded-3xl p-6">
-                <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-gradient-to-br from-brand/20 to-brand2/20 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
                 <div className="relative">
                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-brand2 text-white shadow-lg shadow-brand/25">
                     <Icon name={skill.icon} className="h-6 w-6" />

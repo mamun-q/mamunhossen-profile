@@ -20,6 +20,8 @@ export const projects: Project[] = [
     status: { en: 'Live', bn: 'লাইভ' },
     liveUrl: 'https://mamun-q.github.io/MeetBook/',
     githubUrl: 'https://github.com/mamun-q/MeetBook',
+    image:
+      'https://res.cloudinary.com/e3sdmsgs/image/upload/v1795445110/meetbook/trfaijkp9rvwvlf22uiu.jpg',
     gradient: 'linear-gradient(135deg,#1877f2 0%,#7b61ff 60%,#c86bff 100%)',
     monogram: 'M',
   },

@@ -550,6 +550,11 @@ function ProjectsEditor({ content, setContent, save }: EditorProps) {
               />
             </div>
             <TextField
+              label="Screenshot image URL (blank = gradient panel)"
+              value={proj.image ?? ''}
+              onChange={(v) => setProject(i, { ...proj, image: v.trim() ? v : undefined })}
+            />
+            <TextField
               label="Card gradient (CSS)"
               value={proj.gradient}
               onChange={(v) => setProject(i, { ...proj, gradient: v })}

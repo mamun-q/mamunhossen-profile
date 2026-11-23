@@ -203,6 +203,7 @@ function cleanProject(item: unknown): Project | null {
     status: isLText(item.status) ? { en: item.status.en, bn: item.status.bn } : EMPTY_LTEXT,
     ...(safeUrl(item.liveUrl) ? { liveUrl: safeUrl(item.liveUrl) as string } : {}),
     ...(safeUrl(item.githubUrl) ? { githubUrl: safeUrl(item.githubUrl) as string } : {}),
+    ...(safeUrl(item.image) ? { image: safeUrl(item.image) as string } : {}),
     gradient: asStr(item.gradient, ''),
     monogram: asStr(item.monogram, ''),
   };

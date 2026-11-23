@@ -32,6 +32,8 @@ export interface Project {
   status: LText;
   liveUrl?: string;
   githubUrl?: string;
+  /** Optional real product screenshot shown on the card */
+  image?: string;
   /** CSS gradient used for the generated project visual */
   gradient: string;
   monogram: string;

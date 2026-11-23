@@ -23,14 +23,13 @@ function SectionPlaceholder() {
 import type { ReactNode } from 'react';
 import { ContentProvider } from './content';
 import { PrefsProvider } from './prefs';
-import { BackToTop, CustomCursor, Footer, Nav } from './components/Chrome';
+import { BackToTop, Footer, Nav } from './components/Chrome';
 import Hero from './components/Hero';
 import { ProfileSection, SkillsSection, WorldSection } from './components/Sections';
 import ProjectsSection from './components/Projects';
 
 // Below-the-fold and routed views are code-split to keep the first
 // mobile load light.
-const GallerySection = lazy(() => import('./components/Gallery'));
 const ContactSection = lazy(() => import('./components/Contact'));
 const CvView = lazy(() => import('./components/CvView'));
 // The admin dashboard (and supabase-js with it) loads only on #/admin.
@@ -145,7 +144,6 @@ function Site() {
           intro layer left the page unresponsive until reload
           (2026-11-23). The site now opens directly — do not
           re-add a blocking intro. */}
-      <CustomCursor />
       <Nav />
       <main>
         <Hero />
@@ -154,7 +152,6 @@ function Site() {
         <ProjectsSection />
         <WorldSection />
         <Suspense fallback={<SectionPlaceholder />}>
-          <GallerySection />
           <ContactSection />
         </Suspense>
       </main>

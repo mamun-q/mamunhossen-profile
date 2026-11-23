@@ -16,18 +16,28 @@ export default function ProjectsSection() {
           {projects.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.1}>
               <article className="group glass card-hover flex h-full flex-col overflow-hidden rounded-[28px]">
-                {/* generated visual */}
-                <div
-                  className="relative flex h-48 items-center justify-center overflow-hidden sm:h-56"
-                  style={{ background: p.gradient }}
-                  aria-hidden="true"
-                >
-                  <div className="absolute inset-0 bg-[radial-gradient(420px_200px_at_20%_0%,rgba(255,255,255,0.35),transparent_60%)]" />
-                  <div className="absolute -right-8 -bottom-10 h-44 w-44 rounded-full border-[22px] border-white/15" />
-                  <div className="absolute top-6 left-6 h-16 w-16 rounded-full border-[14px] border-white/10" />
-                  <span className="font-display relative text-7xl font-bold text-white/95 drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-transform duration-500 group-hover:scale-110">
-                    {p.monogram}
-                  </span>
+                {/* Real product screenshot when one exists;
+                    otherwise a clean gradient + monogram panel
+                    (decorative rings removed in the designer pack). */}
+                <div className="relative h-48 overflow-hidden sm:h-56">
+                  {p.image ? (
+                    <img
+                      src={p.image}
+                      alt={`${p.name} — screenshot`}
+                      loading="lazy"
+                      className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <div
+                      className="flex h-full items-center justify-center"
+                      style={{ background: p.gradient }}
+                      aria-hidden="true"
+                    >
+                      <span className="font-display text-7xl font-bold text-white/95 drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+                        {p.monogram}
+                      </span>
+                    </div>
+                  )}
                   <span className="glass absolute top-4 right-4 flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold text-slate-800 dark:text-white">
                     <span
                       className={`h-1.5 w-1.5 rounded-full ${
