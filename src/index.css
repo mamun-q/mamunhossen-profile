@@ -16,13 +16,20 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: clip;
 }
 
 body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Horizontal overflow is clipped on #root, NOT on html/body:
+   overflow on the root scroller can freeze vertical scrolling
+   in Firefox for Android (Limon's phone: page rendered but no
+   scroll and no tap response, 2026-11-23). #root is not the
+   scroll container, so clipping there is safe everywhere. */
+#root {
   overflow-x: clip;
 }
 
