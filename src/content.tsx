@@ -144,6 +144,30 @@ function asItemList<T>(v: unknown, fallback: T[], clean: (item: unknown) => T | 
 
 const EMPTY_LTEXT: LTextShape = { en: '', bn: '' };
 
+/**
+ * Audit-2 A4: only web-safe URL schemes may reach an anchor. A
+ * site_content row is data, not code — a `javascript:` href must
+ * never render as a live link.
+ */
+function safeUrl(v: unknown): string | null {
+  if (typeof v !== 'string' || !v) return null;
+  return /^(https:\/\/|http:\/\/|mailto:|#)/i.test(v) ? v : null;
+}
+
+/**
+ * Audit-2 A1: derive a small Cloudinary thumbnail from a full-size
+ * upload URL (the admin gallery path stored the original as its
+ * own thumb, so the public grid downloaded megabytes per tile).
+ */
+export function cloudinaryThumb(url: string): string {
+  const marker = '/upload/';
+  const i = url.indexOf('res.cloudinary.com');
+  const j = url.indexOf(marker);
+  if (i === -1 || j === -1) return url;
+  const cut = j + marker.length;
+  return `${url.slice(0, cut)}c_fill,w_480,h_480,f_auto,q_auto/${url.slice(cut)}`;
+}
+
 function cleanProfile(v: unknown, base: ProfileData): ProfileData {
   if (!isRecord(v)) return base;
   return {
@@ -177,8 +201,8 @@ function cleanProject(item: unknown): Project | null {
     description: { en: item.description.en, bn: item.description.bn },
     tech: asStrList(item.tech, []),
     status: isLText(item.status) ? { en: item.status.en, bn: item.status.bn } : EMPTY_LTEXT,
-    ...(typeof item.liveUrl === 'string' && item.liveUrl ? { liveUrl: item.liveUrl } : {}),
-    ...(typeof item.githubUrl === 'string' && item.githubUrl ? { githubUrl: item.githubUrl } : {}),
+    ...(safeUrl(item.liveUrl) ? { liveUrl: safeUrl(item.liveUrl) as string } : {}),
+    ...(safeUrl(item.githubUrl) ? { githubUrl: safeUrl(item.githubUrl) as string } : {}),
     gradient: asStr(item.gradient, ''),
     monogram: asStr(item.monogram, ''),
   };
@@ -193,10 +217,13 @@ function cleanSkill(item: unknown): SkillArea | null {
 function cleanGalleryItem(item: unknown): GalleryItem | null {
   if (!isRecord(item) || typeof item.id !== 'string' || !item.id) return null;
   if (typeof item.src !== 'string' || !item.src || !isLText(item.alt)) return null;
+  const thumb = asStr(item.thumb, item.src);
   return {
     id: item.id,
     src: item.src,
-    thumb: asStr(item.thumb, item.src),
+    // A thumb identical to a full-size Cloudinary src gets a real
+    // 480px derivative at read time (audit-2 A1).
+    thumb: thumb === item.src ? cloudinaryThumb(item.src) : thumb,
     alt: { en: item.alt.en, bn: item.alt.bn },
     category: asStr(item.category, 'Portrait'),
   };
@@ -204,8 +231,10 @@ function cleanGalleryItem(item: unknown): GalleryItem | null {
 
 function cleanLink(item: unknown): SocialLink | null {
   if (!isRecord(item) || typeof item.id !== 'string' || !item.id) return null;
-  if (typeof item.label !== 'string' || typeof item.href !== 'string') return null;
-  return { id: item.id, label: item.label, href: item.href, icon: asStr(item.icon, 'globe') };
+  if (typeof item.label !== 'string') return null;
+  const href = safeUrl(item.href);
+  if (!href) return null;
+  return { id: item.id, label: item.label, href, icon: asStr(item.icon, 'globe') };
 }
 
 function cleanWorld(v: unknown, base: DigitalWorldData): DigitalWorldData {
@@ -280,19 +309,38 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      try {
-        const { getSupabase } = await import('./lib/supabase');
-        const supabase = getSupabase();
-        const { data, error } = await supabase.from('site_content').select('key, value');
-        if (cancelled || error || !data) return; // keep local content
-        setContent(contentFromRows(data as { key: string; value: unknown }[]));
-      } catch {
-        /* offline / backend unavailable — local content stays */
-      }
-    })();
+    // Audit-2 improvement C1 (freeze candidate B1): the overlay is
+    // identical to the local defaults in the common case, so keep
+    // its 218KB supabase-js parse + full-tree re-render OUT of the
+    // first-input window — start after window load, at idle.
+    const start = () => {
+      if (cancelled) return;
+      (async () => {
+        try {
+          const { getSupabase } = await import('./lib/supabase');
+          const supabase = getSupabase();
+          const { data, error } = await supabase.from('site_content').select('key, value');
+          if (cancelled || error || !data) return; // keep local content
+          setContent(contentFromRows(data as { key: string; value: unknown }[]));
+        } catch {
+          /* offline / backend unavailable — local content stays */
+        }
+      })();
+    };
+    const ric = window.requestIdleCallback as typeof window.requestIdleCallback | undefined;
+    let idleId = 0;
+    let timer = 0;
+    const schedule = () => {
+      if (ric) idleId = ric(start, { timeout: 2500 });
+      else timer = window.setTimeout(start, 1200);
+    };
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule, { once: true });
     return () => {
       cancelled = true;
+      window.removeEventListener('load', schedule);
+      if (idleId && window.cancelIdleCallback) window.cancelIdleCallback(idleId);
+      window.clearTimeout(timer);
     };
   }, []);
 

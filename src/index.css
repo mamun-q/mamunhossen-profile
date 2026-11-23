@@ -62,6 +62,47 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
+/* Audit-2 improvement C2 (freeze candidate B3): backdrop-filter is
+   composited expensively on phones — ~20 large glass cards forced
+   a re-blur of everything behind them on every scroll frame. On
+   small screens cards go near-solid (the section backgrounds are
+   mostly flat, so the look barely changes); the fixed header and
+   menus keep the real blur. */
+@media (max-width: 639px) {
+  .glass {
+    background: rgba(248, 250, 252, 0.92);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .dark .glass {
+    background: rgba(13, 16, 32, 0.92);
+  }
+  header.glass,
+  header .glass,
+  .glass-keep-blur {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+  .dark header.glass,
+  .dark header .glass,
+  .dark .glass-keep-blur {
+    background: rgba(255, 255, 255, 0.045);
+  }
+}
+
+/* Audit-2 improvement C4: skip layout/paint of below-the-fold
+   sections until they near the viewport — cheaper first render
+   and cheaper content-swap re-render on low-end phones. */
+#skills,
+#projects,
+#world,
+#gallery,
+#contact {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
+
 .card-hover {
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.45s ease;
 }

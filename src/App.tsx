@@ -76,6 +76,28 @@ function Site() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
+  // Audit-2 A5: a first-load deep link (#gallery, #contact, …)
+  // points at sections that may not exist yet (two are lazy), so
+  // the browser's own anchor jump misses. Re-apply the hash once
+  // the target mounts.
+  useEffect(() => {
+    if (route !== 'home') return;
+    const id = window.location.hash.replace('#', '');
+    if (!id || id.startsWith('/')) return;
+    let tries = 0;
+    const timer = window.setInterval(() => {
+      tries += 1;
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView();
+        window.clearInterval(timer);
+      } else if (tries >= 12) {
+        window.clearInterval(timer);
+      }
+    }, 250);
+    return () => window.clearInterval(timer);
+  }, [route]);
+
   if (route === 'admin') {
     return (
       <div className="min-h-svh bg-slate-50 text-slate-800 transition-colors duration-500 dark:bg-ink dark:text-slate-100">

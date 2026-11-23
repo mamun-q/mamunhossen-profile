@@ -4,7 +4,7 @@ import type { FormEvent, ReactNode } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { Inbox, LogOut } from 'lucide-react';
 import { getSupabase } from '../lib/supabase';
-import { LOCAL_CONTENT, contentFromRows, moduleValue } from '../content';
+import { LOCAL_CONTENT, cloudinaryThumb, contentFromRows, moduleValue } from '../content';
 import type { ContentKey, SiteContent } from '../content';
 import type { GalleryItem, LText, ProfileCard, Project, SkillArea, SocialLink } from '../data';
 import { AddButton, Field, LTextField, RecordCard, SaveBar, TextField, inputCls } from './fields';
@@ -191,8 +191,8 @@ function SignIn({ denied, onAttempt }: { denied: boolean; onAttempt: () => void 
       )}
 
       <form onSubmit={onSubmit} className="mt-5 space-y-4">
-        <TextField label="Email" type="email" value={email} onChange={setEmail} />
-        <TextField label="Password" type="password" value={password} onChange={setPassword} />
+        <TextField label="Email" type="email" autoComplete="email" value={email} onChange={setEmail} />
+        <TextField label="Password" type="password" autoComplete="current-password" value={password} onChange={setPassword} />
         <button
           type="submit"
           disabled={busy || !email.trim() || !password}
@@ -668,7 +668,9 @@ function GalleryEditor({ content, setContent, save }: EditorProps) {
         {
           id: `photo-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
           src,
-          thumb: src,
+          // Audit-2 A1: store a real 480px Cloudinary derivative as
+          // the thumb, not the multi-MB original.
+          thumb: cloudinaryThumb(src),
           alt: { en: '', bn: '' },
           category: category.trim() || 'Portrait',
         },

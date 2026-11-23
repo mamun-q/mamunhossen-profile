@@ -36,12 +36,14 @@ export function TextField({
   onChange,
   placeholder,
   type = 'text',
+  autoComplete,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   type?: string;
+  autoComplete?: string;
 }) {
   return (
     <Field label={label}>
@@ -49,6 +51,7 @@ export function TextField({
         type={type}
         value={value}
         placeholder={placeholder}
+        autoComplete={autoComplete}
         onChange={(e) => onChange(e.target.value)}
         className={inputCls}
       />

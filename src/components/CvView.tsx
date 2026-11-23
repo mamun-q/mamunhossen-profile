@@ -115,7 +115,7 @@ export default function CvView() {
             {t('cvContact')}
           </h2>
           <ul className="mt-2.5 space-y-1 text-sm text-slate-600">
-            <li>Email: {profile.email}</li>
+            <li>{t('emailLabel')}: {profile.email}</li>
             {socialLinks
               .filter((l) => l.href.startsWith('http'))
               .map((l) => (

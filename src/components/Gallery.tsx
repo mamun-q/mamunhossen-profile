@@ -50,9 +50,17 @@ export default function GallerySection() {
     [items.length],
   );
 
+  const prevOpenRef = useRef<number | null>(null);
   useEffect(() => {
-    if (openIdx === null) return;
-    closeBtnRef.current?.focus();
+    if (openIdx === null) {
+      prevOpenRef.current = null;
+      return;
+    }
+    // Audit-2 A3: move focus into the dialog only when it OPENS —
+    // re-focusing Close on every photo step yanked focus away from
+    // the Next/Previous button the user just used.
+    if (prevOpenRef.current === null) closeBtnRef.current?.focus();
+    prevOpenRef.current = openIdx;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
       if (e.key === 'ArrowRight') step(1);

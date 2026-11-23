@@ -36,7 +36,15 @@ export default function Starfield({ className = '' }: { className?: string }) {
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      // Audit-2 A2: mobile browsers (Firefox Android's dynamic
+      // toolbar above all) fire resize DURING scroll attempts.
+      // Reallocating the canvas bitmap + regenerating every star on
+      // each event saturates the main thread exactly while the user
+      // is trying to scroll — so ignore no-change resizes, and the
+      // listener below debounces the rest.
+      if (Math.abs(rect.width - w) < 2 && Math.abs(rect.height - h) < 2 && stars.length > 0) return;
+      const dprCap = rect.width < 640 ? 1.5 : 1.75;
+      const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
       w = rect.width;
       h = rect.height;
       canvas.width = Math.max(1, Math.floor(w * dpr));
@@ -84,7 +92,12 @@ export default function Starfield({ className = '' }: { className?: string }) {
     };
 
     resize();
-    window.addEventListener('resize', resize);
+    let resizeTimer = 0;
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(resize, 150);
+    };
+    window.addEventListener('resize', onResize);
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -103,7 +116,8 @@ export default function Starfield({ className = '' }: { className?: string }) {
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener('resize', resize);
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener('resize', onResize);
       document.removeEventListener('visibilitychange', onVis);
       io.disconnect();
     };

@@ -43,107 +43,6 @@ export function SectionHeading({ kicker, title }: { kicker: string; title: strin
   );
 }
 
-/* ---------------- Loading intro ---------------- */
-
-export function Loader({ done }: { done: () => void }) {
-  const { t } = usePrefs();
-  const { profile, settings } = useContent();
-  const brand = settings.brandName || profile.brandName;
-  const [show, setShow] = useState(() => {
-    try {
-      return !sessionStorage.getItem('limon-intro');
-    } catch {
-      return true;
-    }
-  });
-  const [leaving, setLeaving] = useState(false);
-
-  // Hardened 2026-11-23 after Limon's phone report (buttons dead
-  // until reload): the intro is a full-screen overlay, and its old
-  // removal depended on framer-motion's exit animation completing.
-  // If that stalls on a phone, the invisible overlay eats every tap
-  // and only a reload (which skips the intro via sessionStorage)
-  // frees the page. Now dismissal is plain timers + CSS: touches are
-  // released the moment fading starts, unmount is timer-guaranteed,
-  // and tapping the intro skips it instantly.
-  useEffect(() => {
-    if (!show) {
-      done();
-      return;
-    }
-    const fade = setTimeout(() => setLeaving(true), 1400);
-    const unmount = setTimeout(() => {
-      try {
-        sessionStorage.setItem('limon-intro', '1');
-      } catch {
-        /* ignore */
-      }
-      setShow(false);
-      done();
-    }, 1750);
-    return () => {
-      clearTimeout(fade);
-      clearTimeout(unmount);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (!show) return null;
-
-  const skip = () => {
-    try {
-      sessionStorage.setItem('limon-intro', '1');
-    } catch {
-      /* ignore */
-    }
-    setLeaving(true);
-    setTimeout(() => {
-      setShow(false);
-      done();
-    }, 120);
-  };
-
-  return (
-        <div
-          className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-ink transition-opacity duration-300 ${
-            leaving ? 'pointer-events-none opacity-0' : 'opacity-100'
-          }`}
-          aria-hidden="true"
-          onClick={skip}
-        >
-          <div className="flex overflow-hidden">
-            {brand.split('').map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: '110%', opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.08 * i, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                className="font-display text-gradient text-6xl font-bold tracking-[0.08em] sm:text-7xl"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-            className="mt-4 text-xs tracking-[0.25em] text-slate-400 uppercase"
-          >
-            {t('loadingTag')}
-          </motion.p>
-          <div className="mt-8 h-[3px] w-44 overflow-hidden rounded-full bg-white/10">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-brand to-brand2"
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              transition={{ duration: 1.15, ease: 'easeInOut' }}
-            />
-          </div>
-        </div>
-  );
-}
-
 /* ---------------- Custom cursor (fine pointers only) ---------------- */
 
 export function CustomCursor() {
@@ -244,7 +143,8 @@ export function Nav() {
     };
     scan();
     mo = new MutationObserver(scan);
-    mo.observe(document.body, { childList: true, subtree: true });
+    // Audit-2 B5: watch #root only, not the whole body subtree.
+    mo.observe(document.getElementById('root') ?? document.body, { childList: true, subtree: true });
     const stop = setTimeout(() => mo?.disconnect(), 15000);
     return () => {
       io.disconnect();
