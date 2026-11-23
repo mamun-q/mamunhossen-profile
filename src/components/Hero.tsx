@@ -64,7 +64,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.85, ease }}
-            className="font-display text-gradient mt-2 text-[clamp(4.2rem,17vw,10.5rem)] leading-[0.95] font-bold tracking-[0.04em] drop-shadow-[0_10px_45px_rgba(24,119,242,0.35)]"
+            className="font-display text-gradient mt-2 text-[clamp(3.4rem,17vw,10.5rem)] leading-[0.95] font-bold tracking-[0.04em] drop-shadow-[0_10px_45px_rgba(24,119,242,0.35)]"
           >
             {brand}
           </motion.h1>

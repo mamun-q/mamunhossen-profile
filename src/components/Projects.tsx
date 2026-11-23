@@ -8,7 +8,7 @@ export default function ProjectsSection() {
   const { projects } = useContent();
 
   return (
-    <section id="projects" className="relative scroll-mt-24 px-4 py-24 sm:px-6">
+    <section id="projects" className="relative scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_450px_at_85%_20%,rgba(123,97,255,0.09),transparent_65%)]" />
       <div className="relative mx-auto max-w-6xl">
         <SectionHeading kicker={t('projectsKicker')} title={t('projectsTitle')} />

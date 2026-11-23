@@ -9,7 +9,7 @@ export function ProfileSection() {
   const { t, lang } = usePrefs();
   const { profileCards } = useContent();
   return (
-    <section id="about" className="relative scroll-mt-24 px-4 py-24 sm:px-6">
+    <section id="about" className="relative scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeading kicker={t('profileKicker')} title={t('profileTitle')} />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -40,7 +40,7 @@ export function SkillsSection() {
   const { t, lang } = usePrefs();
   const { skills } = useContent();
   return (
-    <section id="skills" className="relative scroll-mt-24 px-4 py-24 sm:px-6">
+    <section id="skills" className="relative scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(800px_400px_at_50%_0%,rgba(24,119,242,0.08),transparent_65%)]" />
       <div className="relative mx-auto max-w-6xl">
         <SectionHeading kicker={t('skillsKicker')} title={t('skillsTitle')} />
@@ -105,7 +105,7 @@ export function WorldSection() {
   const { t } = usePrefs();
   const { digitalWorld, socialLinks } = useContent();
   return (
-    <section id="world" className="relative scroll-mt-24 px-4 py-24 sm:px-6">
+    <section id="world" className="relative scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeading kicker={t('worldKicker')} title={t('worldTitle')} />
         <div className="grid gap-5 sm:grid-cols-2">

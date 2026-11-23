@@ -94,7 +94,7 @@ export default function ContactSection() {
     }`;
 
   return (
-    <section id="contact" className="relative scroll-mt-24 px-4 py-24 sm:px-6">
+    <section id="contact" className="relative scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_450px_at_15%_30%,rgba(24,119,242,0.09),transparent_65%)]" />
       <div className="relative mx-auto max-w-6xl">
         <SectionHeading kicker={t('contactKicker')} title={t('contactTitle')} />
@@ -104,8 +104,8 @@ export default function ContactSection() {
 
         <div className="grid gap-6 lg:grid-cols-5">
           {/* direct contact card */}
-          <Reveal className="lg:col-span-2">
-            <div className="glass flex h-full flex-col rounded-[28px] p-7">
+          <Reveal className="min-w-0 lg:col-span-2">
+            <div className="glass flex h-full flex-col rounded-[28px] p-5 sm:p-7">
               <h3 className="font-display text-lg font-semibold text-slate-900 dark:text-white">
                 {t('directContact')}
               </h3>
@@ -175,8 +175,8 @@ export default function ContactSection() {
           </Reveal>
 
           {/* form card */}
-          <Reveal delay={0.1} className="lg:col-span-3">
-            <div className="glass relative h-full rounded-[28px] p-7">
+          <Reveal delay={0.1} className="min-w-0 lg:col-span-3">
+            <div className="glass relative h-full rounded-[28px] p-5 sm:p-7">
               <AnimatePresence mode="wait">
                 {status === 'sent' ? (
                   <motion.div

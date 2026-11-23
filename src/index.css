@@ -16,6 +16,12 @@
 
 html {
   scroll-behavior: smooth;
+  /* Phone-fit pack (2026-11-23): stop mobile browsers from
+     auto-inflating text beyond the designed sizes (Android
+     large-text / Firefox automatic font sizing made every
+     element render oversized on the owner's phone). */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {

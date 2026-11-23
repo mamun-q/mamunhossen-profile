@@ -90,7 +90,7 @@ export default function GallerySection() {
   const current = openIdx !== null ? items[openIdx] : null;
 
   return (
-    <section id="gallery" className="relative scroll-mt-24 px-4 py-24 sm:px-6">
+    <section id="gallery" className="relative scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeading kicker={t('galleryKicker')} title={t('galleryTitle')} />
 

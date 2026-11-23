@@ -8,7 +8,7 @@ import { Component, Suspense, lazy, useEffect, useState } from 'react';
  */
 function SectionPlaceholder() {
   return (
-    <div aria-hidden="true" className="px-4 py-24 sm:px-6">
+    <div aria-hidden="true" className="px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl animate-pulse space-y-6">
         <div className="h-8 w-48 rounded-full bg-slate-900/10 dark:bg-white/10" />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
