@@ -46,7 +46,10 @@
     <p>1) Tap the blue button a few times — the number must go up.</p>
     <button id="tapBtn" type="button">TAP ME — taps: <span id="count">0</span></button>
     <div class="box" id="info">Reading info…</div>
-    <p>2) Now scroll down — the page must move.</p>
+    <p>2) Tap this button to test the MAIN site from inside your phone:</p>
+    <button id="deepBtn" type="button" style="background: #7b61ff">TEST MAIN SITE</button>
+    <div class="box" id="deep">Main-site test not run yet.</div>
+    <p>3) Now scroll down — the page must move.</p>
     <div class="tall" style="height: 900px">Scroll test area — keep scrolling…</div>
     <div class="tall" style="height: 900px">Almost there…</div>
     <div class="box">✅ You reached the bottom — scrolling works on this page.</div>
@@ -74,6 +77,48 @@
         .catch(function (e) {
           info.innerHTML = 'Browser: ' + navigator.userAgent + '<br>Version check failed: ' + e;
         });
+
+      document.getElementById('deepBtn').addEventListener('click', function () {
+        var deep = document.getElementById('deep');
+        deep.textContent = 'Loading the main site inside this page… wait ~6 seconds.';
+        var frame = document.createElement('iframe');
+        frame.style.width = '100%';
+        frame.style.height = '480px';
+        frame.style.border = '2px solid #7b61ff';
+        frame.style.marginTop = '12px';
+        frame.src = './';
+        document.body.appendChild(frame);
+        setTimeout(function () {
+          try {
+            var w = frame.contentWindow;
+            var d = frame.contentDocument;
+            var lines = [];
+            var se = d.scrollingElement;
+            lines.push('page height: ' + (se ? se.scrollHeight : '?') + ' / screen: ' + w.innerHeight);
+            var el = d.elementFromPoint(w.innerWidth / 2, w.innerHeight / 2);
+            lines.push('middle of screen shows: ' + (el ? el.tagName + ' ' + String(el.className).slice(0, 40) : 'nothing'));
+            lines.push('body overflowY: ' + w.getComputedStyle(d.body).overflowY);
+            w.scrollTo(0, 800);
+            setTimeout(function () {
+              lines.push('scroll after try: ' + Math.round(w.scrollY));
+              var btns = d.querySelectorAll('header button');
+              lines.push('top buttons found: ' + btns.length);
+              if (btns.length > 1) {
+                var beforeCls = d.documentElement.className;
+                btns[1].click();
+                setTimeout(function () {
+                  lines.push('theme button works: ' + (d.documentElement.className !== beforeCls ? 'YES' : 'NO'));
+                  deep.innerHTML = lines.join('<br>');
+                }, 600);
+              } else {
+                deep.innerHTML = lines.join('<br>');
+              }
+            }, 600);
+          } catch (e) {
+            deep.textContent = 'Main-site test error: ' + e;
+          }
+        }, 6000);
+      });
     </script>
   </body>
 </html>

@@ -28,13 +28,18 @@ export default function Hero() {
             transition={{ duration: 0.9, ease }}
             className="relative"
           >
-            <div className="avatar-ring rounded-full p-[3.5px] shadow-[0_0_70px_-8px_rgba(123,97,255,0.75)]">
+            {/* The gradient ring spins on its OWN layer — the photo
+                must stay still. (The ring used to wrap the img, so
+                the portrait itself rotated; seen in Limon's screen
+                recording 2026-11-23.) */}
+            <div className="relative h-32 w-32 rounded-full shadow-[0_0_70px_-8px_rgba(123,97,255,0.75)] sm:h-40 sm:w-40">
+              <div className="avatar-ring absolute inset-0 rounded-full" aria-hidden="true" />
               <img
                 src={profile.avatarUrl}
                 alt={`${profile.fullName} — portrait`}
                 width={480}
                 height={480}
-                className="h-32 w-32 rounded-full border-4 border-white object-cover sm:h-40 sm:w-40 dark:border-ink"
+                className="absolute inset-[3.5px] h-[calc(100%-7px)] w-[calc(100%-7px)] rounded-full border-4 border-white object-cover dark:border-ink"
                 loading="eager"
                 fetchPriority="high"
               />
