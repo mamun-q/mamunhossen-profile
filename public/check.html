@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Site check</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #0b0e1a;
+        color: #fff;
+      }
+      button {
+        display: block;
+        width: 100%;
+        padding: 22px;
+        font-size: 20px;
+        font-weight: 700;
+        border: 0;
+        border-radius: 14px;
+        background: #2563eb;
+        color: #fff;
+      }
+      .box {
+        background: #171b30;
+        border-radius: 12px;
+        padding: 14px;
+        margin-top: 16px;
+        word-break: break-all;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .tall {
+        margin-top: 16px;
+        background: linear-gradient(#7b61ff, #2563eb);
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Site check page</h1>
+    <p>1) Tap the blue button a few times — the number must go up.</p>
+    <button id="tapBtn" type="button">TAP ME — taps: <span id="count">0</span></button>
+    <div class="box" id="info">Reading info…</div>
+    <p>2) Now scroll down — the page must move.</p>
+    <div class="tall" style="height: 900px">Scroll test area — keep scrolling…</div>
+    <div class="tall" style="height: 900px">Almost there…</div>
+    <div class="box">✅ You reached the bottom — scrolling works on this page.</div>
+    <script>
+      var n = 0;
+      document.getElementById('tapBtn').addEventListener('click', function () {
+        n += 1;
+        document.getElementById('count').textContent = String(n);
+      });
+      var info = document.getElementById('info');
+      info.innerHTML = 'Browser: ' + navigator.userAgent + '<br>Checking which version of the main site your phone receives…';
+      fetch('./', { cache: 'no-store' })
+        .then(function (r) {
+          return r.text();
+        })
+        .then(function (html) {
+          var m = html.match(/assets\/index-[A-Za-z0-9_-]+\.js/);
+          info.innerHTML =
+            'Browser: ' +
+            navigator.userAgent +
+            '<br>Main site version: <b>' +
+            (m ? m[0] : 'not found') +
+            '</b>';
+        })
+        .catch(function (e) {
+          info.innerHTML = 'Browser: ' + navigator.userAgent + '<br>Version check failed: ' + e;
+        });
+    </script>
+  </body>
+</html>

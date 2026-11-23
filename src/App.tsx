@@ -2,7 +2,7 @@ import { Component, Suspense, lazy, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ContentProvider } from './content';
 import { PrefsProvider } from './prefs';
-import { BackToTop, CustomCursor, Footer, Loader, Nav } from './components/Chrome';
+import { BackToTop, CustomCursor, Footer, Nav } from './components/Chrome';
 import Hero from './components/Hero';
 import { ProfileSection, SkillsSection, WorldSection } from './components/Sections';
 import ProjectsSection from './components/Projects';
@@ -60,7 +60,6 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean
 
 function Site() {
   const [route, setRoute] = useState<Route>(routeFromHash);
-  const [, setIntroDone] = useState(false);
 
   useEffect(() => {
     const onHash = () => {
@@ -99,7 +98,10 @@ function Site() {
 
   return (
     <div className="min-h-svh bg-slate-50 text-slate-800 transition-colors duration-500 dark:bg-ink dark:text-slate-100">
-      <Loader done={() => setIntroDone(true)} />
+      {/* No intro/loader overlay: on Limon's phone a full-screen
+          intro layer left the page unresponsive until reload
+          (2026-11-23). The site now opens directly — do not
+          re-add a blocking intro. */}
       <CustomCursor />
       <Nav />
       <main>
