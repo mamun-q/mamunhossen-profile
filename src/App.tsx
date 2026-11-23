@@ -1,4 +1,25 @@
 import { Component, Suspense, lazy, useEffect, useState } from 'react';
+
+/**
+ * P-04: placeholder for the lazy below-fold sections — on a slow
+ * connection fallback={null} left two blank holes and a layout
+ * jump when the chunk landed. This reserves roughly the right
+ * height with a quiet pulse until the real sections mount.
+ */
+function SectionPlaceholder() {
+  return (
+    <div aria-hidden="true" className="px-4 py-24 sm:px-6">
+      <div className="mx-auto max-w-6xl animate-pulse space-y-6">
+        <div className="h-8 w-48 rounded-full bg-slate-900/10 dark:bg-white/10" />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="h-56 rounded-3xl bg-slate-900/5 dark:bg-white/5" />
+          <div className="h-56 rounded-3xl bg-slate-900/5 dark:bg-white/5" />
+          <div className="h-56 rounded-3xl bg-slate-900/5 dark:bg-white/5" />
+        </div>
+      </div>
+    </div>
+  );
+}
 import type { ReactNode } from 'react';
 import { ContentProvider } from './content';
 import { PrefsProvider } from './prefs';
@@ -101,7 +122,7 @@ function Site() {
   if (route === 'admin') {
     return (
       <div className="min-h-svh bg-slate-50 text-slate-800 transition-colors duration-500 dark:bg-ink dark:text-slate-100">
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="min-h-svh" aria-hidden="true" />}>
           <AdminApp />
         </Suspense>
       </div>
@@ -111,7 +132,7 @@ function Site() {
   if (route === 'cv') {
     return (
       <main>
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="min-h-svh" aria-hidden="true" />}>
           <CvView />
         </Suspense>
       </main>
@@ -132,7 +153,7 @@ function Site() {
         <SkillsSection />
         <ProjectsSection />
         <WorldSection />
-        <Suspense fallback={null}>
+        <Suspense fallback={<SectionPlaceholder />}>
           <GallerySection />
           <ContactSection />
         </Suspense>
