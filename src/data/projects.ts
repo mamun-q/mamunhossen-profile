@@ -20,8 +20,45 @@ export const projects: Project[] = [
     status: { en: 'Live', bn: 'লাইভ' },
     liveUrl: 'https://mamun-q.github.io/MeetBook/',
     githubUrl: 'https://github.com/mamun-q/MeetBook',
+    image:
+      'https://res.cloudinary.com/e3sdmsgs/image/upload/v1795445110/meetbook/trfaijkp9rvwvlf22uiu.jpg',
     gradient: 'linear-gradient(135deg,#1877f2 0%,#7b61ff 60%,#c86bff 100%)',
     monogram: 'M',
+  },
+  {
+    id: 'addabook',
+    name: 'AddaBook',
+    tagline: {
+      en: 'A friendly social home for everyday adda.',
+      bn: 'প্রতিদিনের আড্ডার নিজের সামাজিক জায়গা।',
+    },
+    description: {
+      en: 'Posts, stories, friends, groups, real-time chat, pages, events, a community marketplace and a token wallet — an original, mobile-first social platform in Bangla, live on the web.',
+      bn: 'পোস্ট, স্টোরি, বন্ধু, গ্রুপ, রিয়েল-টাইম চ্যাট, পেজ, ইভেন্ট, কমিউনিটি বাজার আর টোকেন ওয়ালেট — বাংলায় মোবাইল-প্রথম, সম্পূর্ণ নিজস্ব ডিজাইনের সোশ্যাল প্ল্যাটফর্ম, লাইভ।',
+    },
+    tech: ['JavaScript', 'Supabase', 'Realtime', 'GitHub Pages'],
+    status: { en: 'Live', bn: 'লাইভ' },
+    liveUrl: 'https://mamun-q.github.io/addabook/',
+    githubUrl: 'https://github.com/mamun-q/addabook',
+    gradient: 'linear-gradient(135deg,#6366f1 0%,#8b5cf6 55%,#d946ef 100%)',
+    monogram: 'আ',
+  },
+  {
+    id: 'porashona',
+    name: 'পড়াশোনা (Porashona)',
+    tagline: {
+      en: 'Free study notes & model tests for SSC, HSC, Admission and BCS.',
+      bn: 'SSC, HSC, Admission ও BCS প্রস্তুতির ফ্রি নোট ও মডেল টেস্ট।',
+    },
+    description: {
+      en: 'Chapter-wise notes, suggestions and live model tests with verified answers and explanations — free for students across Bangladesh.',
+      bn: 'অধ্যায়ভিত্তিক নোট, সাজেশন আর যাচাই করা উত্তর ও ব্যাখ্যাসহ লাইভ মডেল টেস্ট — সারা দেশের শিক্ষার্থীদের জন্য সম্পূর্ণ ফ্রি।',
+    },
+    tech: ['Blogger', 'Education', 'Bangla'],
+    status: { en: 'Live', bn: 'লাইভ' },
+    liveUrl: 'https://porashona-edu.blogspot.com/',
+    gradient: 'linear-gradient(135deg,#059669 0%,#10b981 55%,#84cc16 100%)',
+    monogram: 'প',
   },
   {
     id: 'limon-ai',
@@ -38,5 +75,21 @@ export const projects: Project[] = [
     status: { en: 'In Development', bn: 'উন্নয়নাধীন' },
     gradient: 'linear-gradient(135deg,#0ea5e9 0%,#6366f1 55%,#a855f7 100%)',
     monogram: 'AI',
+  },
+  {
+    id: 'limon-hq',
+    name: 'LIMON HQ',
+    tagline: {
+      en: 'My private AI office — hand over a task, watch it move.',
+      bn: 'আমার ব্যক্তিগত AI অফিস — কাজ দিলেই এগিয়ে যায়।',
+    },
+    description: {
+      en: 'An Android app where I hand tasks to an AI team — manager, planner, coder, tester — and watch the progress live. A private tool, built for my own workflow.',
+      bn: 'একটি Android অ্যাপ, যেখানে আমি AI দলকে — ম্যানেজার, প্ল্যানার, কোডার, টেস্টার — কাজ দিই আর অগ্রগতি লাইভ দেখি। সম্পূর্ণ ব্যক্তিগত টুল।',
+    },
+    tech: ['Android', 'AI Agents', 'GitHub API'],
+    status: { en: 'Private', bn: 'ব্যক্তিগত' },
+    gradient: 'linear-gradient(135deg,#064e3b 0%,#047857 55%,#10b981 100%)',
+    monogram: 'HQ',
   },
 ];
