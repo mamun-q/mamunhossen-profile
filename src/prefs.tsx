@@ -23,6 +23,15 @@ function readLang(): Lang {
   } catch {
     /* storage unavailable */
   }
+  // First visit: auto-pick from the visitor's device/browser language —
+  // Bangla devices get Bangla, everyone else gets English.
+  try {
+    const nav = (navigator.language || '').toLowerCase();
+    if (nav.startsWith('bn')) return 'bn';
+    if (nav) return 'en';
+  } catch {
+    /* navigator unavailable */
+  }
   return settings.defaultLang;
 }
 
